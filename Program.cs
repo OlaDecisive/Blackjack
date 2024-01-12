@@ -1,7 +1,9 @@
 ﻿Console.WriteLine("Blackjack!");
 
-IEnumerable<Card> playerCards = Random.Shared.GetItems<Card>(Enum.GetValues<Card>(), 2);
-IEnumerable<Card> dealerCards = Random.Shared.GetItems<Card>(Enum.GetValues<Card>(), 2);
+var deck = new Deck();
+
+IEnumerable<Card> playerCards = [deck.Pop(), deck.Pop()];
+IEnumerable<Card> dealerCards = [deck.Pop(), deck.Pop()];
 
 PrintGameState();
 
@@ -13,7 +15,7 @@ while (gameState == GameState.Running)
 
     if (command?.ToUpperInvariant().StartsWith("H") ?? false)
     {
-        playerCards = playerCards.Concat(Random.Shared.GetItems<Card>(Enum.GetValues<Card>(), 1));
+        playerCards = playerCards.Append(deck.Pop());
         PrintGameState();
     }
     else if (command?.ToUpperInvariant().StartsWith("S") ?? false)
@@ -21,10 +23,17 @@ while (gameState == GameState.Running)
         while (gameState == GameState.Running)
         {
             PrintGameState();
-            var dealerSumStand = dealerCards.Select(card => (int)card).Sum();
+            var dealerSumStand = dealerCards.Select(card => card.NumberValue).Sum();
             if (dealerSumStand < 17)
-                dealerCards = dealerCards.Concat(Random.Shared.GetItems<Card>(Enum.GetValues<Card>(), 1));
+                dealerCards = dealerCards.Append(deck.Pop());
+
+            var previousState = gameState;
+            var previousDealerSum = dealerCards.Select(card => card.NumberValue).Sum();
             gameState = EvaluateGameState();
+            if (gameState == previousState && previousDealerSum == dealerCards.Select(card => card.NumberValue).Sum())
+            {
+                throw new Exception("Unchanged game state detected, aborting");
+            }
         }
     }
     else
@@ -33,27 +42,27 @@ while (gameState == GameState.Running)
         continue;
     }
 
-    var dealerSum = dealerCards.Select(card => (int)card).Sum();
+    var dealerSum = dealerCards.Select(card => card.NumberValue).Sum();
     if (dealerSum < 17)
-        dealerCards = dealerCards.Concat(Random.Shared.GetItems<Card>(Enum.GetValues<Card>(), 1));
+        dealerCards = dealerCards.Append(deck.Pop());
     gameState = EvaluateGameState();
 }
 
 Console.WriteLine($"Gamestate: {gameState}");
-Console.WriteLine($"Dealer cards: {string.Join(", ", dealerCards)}, adding up to {dealerCards.Select(card => (int)card).Sum()}");
+Console.WriteLine($"Dealer cards: {string.Join(", ", dealerCards.Select(card => card.Name))}, adding up to {dealerCards.Select(card => card.NumberValue).Sum()}");
 
 void PrintGameState()
 {
-    Console.WriteLine($"Player cards: {string.Join(", ", playerCards)}, adding up to {playerCards.Select(card => (int)card).Sum()}");
-    Console.WriteLine($"Dealer has {dealerCards.Count()} cards, first one is {dealerCards.First()}");
+    Console.WriteLine($"Player cards: {string.Join(", ", playerCards.Select(card => card.Name))}, adding up to {playerCards.Select(card => card.NumberValue).Sum()}");
+    if (playerCards.Any(card => card.Value == CardValue.Ace))
+        Console.WriteLine($" or {playerCards.Select(card => card.Value == CardValue.Ace ? 11 : card.NumberValue).Sum()}");
+    Console.WriteLine($"Dealer has {dealerCards.Count()} cards, first one is {dealerCards.First().Name}");
 }
 
 GameState EvaluateGameState()
 {
-    // TODO: 'true' blackjack? ace and ten or picture card
-
-    var playerSum = playerCards.Select(card => (int)card).Sum();
-    var dealerSum = dealerCards.Select(card => (int)card).Sum();
+    var playerSum = playerCards.Select(card => card.NumberValue).Sum();
+    var dealerSum = dealerCards.Select(card => card.NumberValue).Sum();
 
     if (playerSum > 21 && dealerSum > 21)
         return GameState.Tie;

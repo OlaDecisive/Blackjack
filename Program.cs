@@ -2,8 +2,8 @@
 
 var deck = new Deck();
 
-IEnumerable<Card> playerCards = [deck.Pop(), deck.Pop()];
-IEnumerable<Card> dealerCards = [deck.Pop(), deck.Pop()];
+IEnumerable<Card> playerCards = [deck.TakeCardFromTop(), deck.TakeCardFromTop()];
+IEnumerable<Card> dealerCards = [deck.TakeCardFromTop(), deck.TakeCardFromTop()];
 
 PrintGameState();
 
@@ -15,7 +15,7 @@ while (gameState == GameState.Running)
 
     if (command?.ToUpperInvariant().StartsWith("H") ?? false)
     {
-        playerCards = playerCards.Append(deck.Pop());
+        playerCards = playerCards.Append(deck.TakeCardFromTop());
         PrintGameState();
     }
     else if (command?.ToUpperInvariant().StartsWith("S") ?? false)
@@ -25,7 +25,7 @@ while (gameState == GameState.Running)
             PrintGameState();
             var dealerSumStand = dealerCards.Select(card => card.NumberValue).Sum();
             if (dealerSumStand < 17)
-                dealerCards = dealerCards.Append(deck.Pop());
+                dealerCards = dealerCards.Append(deck.TakeCardFromTop());
 
             var previousState = gameState;
             var previousDealerSum = dealerCards.Select(card => card.NumberValue).Sum();
@@ -44,7 +44,7 @@ while (gameState == GameState.Running)
 
     var dealerSum = dealerCards.Select(card => card.NumberValue).Sum();
     if (dealerSum < 17)
-        dealerCards = dealerCards.Append(deck.Pop());
+        dealerCards = dealerCards.Append(deck.TakeCardFromTop());
     gameState = EvaluateGameState();
 }
 

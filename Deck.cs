@@ -47,7 +47,7 @@ class Deck
         cards = cards.OrderBy(card => Random.Shared.Next()).ToList(); // shuffle cards
     }
 
-    public Card Pop()
+    public Card TakeCardFromTop()
     {
         var selectedCard = cards.First();
         cards.Remove(selectedCard);

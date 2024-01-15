@@ -20,7 +20,9 @@ public class Game
 {
     public GameState State { get; set; }
 
-    public Deck? Deck { get; set; }
+    public string PlayerName { get; set; } = string.Empty;
+
+    public Deck Deck { get; set; } = new Deck();
     public IEnumerable<Card> PlayerCards  { get; set; } = [];
     public IEnumerable<Card> DealerCards  { get; set; } = [];
 
@@ -28,12 +30,14 @@ public class Game
     {
     }
 
-    public static Game CreateNewGame()
+    public static Game CreateNewGame(string playerName)
     {
-        var game = new Game();
-        game.State = GameState.Running;
-
-        game.Deck = Deck.CreateShuffledDeck();
+        var game = new Game
+        {
+            PlayerName = playerName,
+            State = GameState.Running,
+            Deck = Deck.CreateShuffledDeck()
+        };
 
         game.PlayerCards = [game.Deck.TakeCardFromTop(), game.Deck.TakeCardFromTop()];
         game.DealerCards = [game.Deck.TakeCardFromTop(), game.Deck.TakeCardFromTop()];
@@ -43,11 +47,11 @@ public class Game
 
     public string GetGameState()
     {
-        var output = $"Player cards: {string.Join(", ", PlayerCards.Select(card => card.Name))}, adding up to {PlayerCards.Select(card => card.NumberValue).Sum()}";
+        var output = $"{PlayerName} cards: {string.Join(", ", PlayerCards.Select(card => card.Name))}, adding up to {PlayerCards.Select(card => card.NumberValue).Sum()}";
         if (PlayerCards.Any(card => card.Value == CardValue.Ace))
             output += $" or {PlayerCards.Select(card => card.Value == CardValue.Ace ? 11 : card.NumberValue).Sum()}";
         output += $"\nDealer has {DealerCards.Count()} cards, first one is {DealerCards.First().Name}";
-
+        output += $"\nGame state is: {State}";
         return output;
     }
 

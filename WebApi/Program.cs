@@ -8,6 +8,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options => 
+{
+    options.Cookie.Name = ".Blackjack.Game";
+    options.IdleTimeout = TimeSpan.FromMinutes(10);
+    options.Cookie.IsEssential = true;
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -19,17 +27,32 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapPost("/game", () =>
+app.UseSession();
+
+app.MapPost("/game", (HttpContext context) =>
 {
     var game = Game.CreateNewGame();
-    return game;
+
+    var json = JsonSerializer.Serialize(game);
+    context.Session.SetString("game", json);
+
+    return game.GetGameState();
 });
 
 app.MapPost("/game/Hit", async (HttpContext context) =>
 {
-    var game = await context.Request.ReadFromJsonAsync<Game>();
-    game?.ProgressGameState(PlayerDecision.Hit);
-    return game;
+    //var game = await context.Request.ReadFromJsonAsync<Game>();
+    //game?.ProgressGameState(PlayerDecision.Hit);
+    //return game;
+
+    var json = context.Session.GetString("game");
+    var game = JsonSerializer.Deserialize<Game>(json);
+    game.ProgressGameState(PlayerDecision.Hit);
+
+    json = JsonSerializer.Serialize(game);
+    context.Session.SetString("game", json);
+
+    return game.GetGameState();
 });
 
 app.MapPost("/game/Stand", async (HttpContext context) =>
@@ -41,9 +64,18 @@ app.MapPost("/game/Stand", async (HttpContext context) =>
     context.Request.Body.Position = 0;
 #endif
 
-    var game = await context.Request.ReadFromJsonAsync<Game>();
-    game?.ProgressGameState(PlayerDecision.Stand);
-    return game;
+    //var game = await context.Request.ReadFromJsonAsync<Game>();
+    //game?.ProgressGameState(PlayerDecision.Stand);
+    //return game;
+
+    var json = context.Session.GetString("game");
+    var game = JsonSerializer.Deserialize<Game>(json);
+    game.ProgressGameState(PlayerDecision.Stand);
+
+    json = JsonSerializer.Serialize(game);
+    context.Session.SetString("game", json);
+
+    return game.GetGameState();
 });
 
 app.Run();

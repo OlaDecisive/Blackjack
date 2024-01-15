@@ -74,6 +74,8 @@ GameState EvaluateGameState()
         return GameState.Tie;
     else if (playerSum > dealerSum && dealerSum >= 17)
         return GameState.PlayerWins;
+    else if (playerSum < dealerSum && dealerSum >= 17)
+        return GameState.DealerWins;
     else 
         return GameState.Running;
 }

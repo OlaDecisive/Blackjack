@@ -1,4 +1,6 @@
-﻿Console.WriteLine("Blackjack!");
+﻿using Model;
+
+Console.WriteLine("Blackjack!");
 
 var deck = new Deck();
 

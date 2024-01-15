@@ -83,6 +83,9 @@ public class Game
 
     public void ProgressGameState(PlayerDecision playerDecision)
     {
+        if (State != GameState.Running)
+            return;
+            
         if (playerDecision == PlayerDecision.Hit)
         {
             PlayerCards = PlayerCards.Append(Deck.TakeCardFromTop());

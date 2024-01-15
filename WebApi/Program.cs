@@ -1,3 +1,6 @@
+using System.Text.Json;
+using Model;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -16,29 +19,31 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
+app.MapPost("/game", () =>
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+    var game = Game.CreateNewGame();
+    return game;
+});
 
-app.MapGet("/weatherforecast", () =>
+app.MapPost("/game/Hit", async (HttpContext context) =>
 {
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
+    var game = await context.Request.ReadFromJsonAsync<Game>();
+    game?.ProgressGameState(PlayerDecision.Hit);
+    return game;
+});
+
+app.MapPost("/game/Stand", async (HttpContext context) =>
+{
+#if DEBUG
+    context.Request.EnableBuffering();
+    context.Request.Body.Position = 0;
+    var rawRequestBody = await new StreamReader(context.Request.Body).ReadToEndAsync();
+    context.Request.Body.Position = 0;
+#endif
+
+    var game = await context.Request.ReadFromJsonAsync<Game>();
+    game?.ProgressGameState(PlayerDecision.Stand);
+    return game;
+});
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

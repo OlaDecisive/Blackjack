@@ -20,10 +20,10 @@ public class Hand
 
     public string DescribeDealerHand()
     {
-        if (!Cards.Any())
-            return $"Dealer has {Cards.Count()} cards";
-        else
-            return $"Dealer has {Cards.Count()} cards, first one is {Cards.First().Name}";
+        string output = $"Dealer has {Cards.Count} cards";
+        if (Cards.Any())
+            output += $", first one is {Cards.First().Name}";
+        return output;
     }
 
     public int NumberValue => Cards.Select(card => card.NumberValue).Sum();

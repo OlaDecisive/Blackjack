@@ -73,13 +73,13 @@ app.MapPost("/game/{playerName}/Stand", async (string playerName, HttpContext co
     context.Request.Body.Position = 0;
 #endif
     var json = context.Session.GetString($"game_{playerName}");
-    var game = JsonSerializer.Deserialize<GameState>(json);
-    game.GetNextGameState(PlayerDecision.Stand);
+    var game = JsonSerializer.Deserialize<Game>(json);
+    game.Advance(PlayerDecision.Stand);
 
     json = JsonSerializer.Serialize(game);
     context.Session.SetString($"game_{playerName}", json);
 
-    return game.GetGameDescription();
+    return game.GameDescription;
 });
 
 app.Run();

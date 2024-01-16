@@ -23,8 +23,8 @@ public class Game
     public string PlayerName { get; set; } = string.Empty;
 
     public Deck Deck { get; set; } = new Deck();
-    public IEnumerable<Card> PlayerCards  { get; set; } = [];
-    public IEnumerable<Card> DealerCards  { get; set; } = [];
+    public Hand PlayerHand { get; set; } = new Hand();
+    public Hand DealerHand { get; set; } = new Hand();
 
     public Game()
     {
@@ -39,31 +39,26 @@ public class Game
             Deck = Deck.CreateShuffledDeck()
         };
 
-        game.PlayerCards = [game.Deck.TakeCardFromTop(), game.Deck.TakeCardFromTop()];
-        game.DealerCards = [game.Deck.TakeCardFromTop(), game.Deck.TakeCardFromTop()];
+        game.PlayerHand = Hand.CreateHand([game.Deck.TakeCardFromTop(), game.Deck.TakeCardFromTop()]);
+        game.DealerHand = Hand.CreateHand([game.Deck.TakeCardFromTop(), game.Deck.TakeCardFromTop()]);
+
 
         return game;
     }
 
     public string GetGameState()
     {
-        var output = $"{PlayerName} cards: {string.Join(", ", PlayerCards.Select(card => card.Name))}, adding up to {PlayerCards.Select(card => card.NumberValue).Sum()}";
-        if (PlayerCards.Any(card => card.Value == CardValue.Ace))
-            output += $" or {PlayerCards.Select(card => card.Value == CardValue.Ace ? 11 : card.NumberValue).Sum()}";
-        output += $"\nDealer has {DealerCards.Count()} cards, first one is {DealerCards.First().Name}";
+        var output = $"{Deck.Cards.Count} cards in deck";
+        output += $"\n{PlayerName} cards: {PlayerHand.DescribeHand()}";
+        output += $"\nDealer cards: {DealerHand.DescribeDealerHand()}";
         output += $"\nGame state is: {State}";
         return output;
     }
 
-    public string GetDealerState()
-    {
-        return $"Dealer cards: {string.Join(", ", DealerCards.Select(card => card.Name))}, adding up to {DealerCards.Select(card => card.NumberValue).Sum()}";
-    }
-
     public GameState EvaluateGameState()
     {
-        var playerSum = PlayerCards.Select(card => card.NumberValue).Sum();
-        var dealerSum = DealerCards.Select(card => card.NumberValue).Sum();
+        var playerSum = PlayerHand.NumberValue;
+        var dealerSum = DealerHand.NumberValue;
 
         if (playerSum > 21 && dealerSum > 21)
             return GameState.Tie;
@@ -88,7 +83,7 @@ public class Game
             
         if (playerDecision == PlayerDecision.Hit)
         {
-            PlayerCards = PlayerCards.Append(Deck.TakeCardFromTop());
+            PlayerHand.AddCard(Deck.TakeCardFromTop());
         }
         else if (playerDecision == PlayerDecision.Stand)
         {
@@ -96,23 +91,23 @@ public class Game
             // TODO: could this inner while loop be replaced by recursive calls to ProgressGameState?
             while (State == GameState.Running)
             {
-                var dealerSumStand = DealerCards.Select(card => card.NumberValue).Sum();
+                var dealerSumStand = DealerHand.NumberValue;
                 if (dealerSumStand < 17)
-                    DealerCards = DealerCards.Append(Deck.TakeCardFromTop());
+                     DealerHand.AddCard(Deck.TakeCardFromTop());
 
                 var previousState = State;
-                var previousDealerSum = DealerCards.Select(card => card.NumberValue).Sum();
+                var previousDealerSum = DealerHand.NumberValue;
                 State = EvaluateGameState();
-                if (State == previousState && previousDealerSum == DealerCards.Select(card => card.NumberValue).Sum())
+                if (State == previousState && previousDealerSum == DealerHand.NumberValue)
                 {
                     throw new Exception("Unchanged game state detected, aborting");
                 }
             }
         }
 
-        var dealerSum = DealerCards.Select(card => card.NumberValue).Sum();
+        var dealerSum = DealerHand.NumberValue;
         if (dealerSum < 17)
-            DealerCards = DealerCards.Append(Deck.TakeCardFromTop());
+             DealerHand.AddCard(Deck.TakeCardFromTop());
         State = EvaluateGameState();
     }
 }

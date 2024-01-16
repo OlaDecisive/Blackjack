@@ -12,7 +12,7 @@ public class TestModel
         var playerName = "tester";
         
         // Act
-        var game = GameState.CreateInitialGameState(playerName);
+        var game = GameState.CreateInitialGameState(playerName, new DoNothingShuffler());
 
         // Assert
         Assert.Equal(playerName, game.PlayerName);

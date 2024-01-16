@@ -21,9 +21,11 @@ public class Game
 {
     public IList<GameState> Rounds { get; }
     
-    public Game(string playerName)
+    public Game(string playerName) : this(playerName, new RandomShuffler()) {}
+
+    public Game(string playerName, IShuffler random)
     {
-        Rounds = [GameState.CreateInitialGameState(playerName)];
+        Rounds = [GameState.CreateInitialGameState(playerName, random)];
     }
 
     [JsonConstructor]
@@ -38,6 +40,7 @@ public class Game
         Rounds.Add(nextRound);
 
         // If player stands, dealer hits until dealer cards are >= 17 or greater than players cards
+        // TODO: dealer shouldn't know about players hand?
         if (playerDecision == PlayerDecision.Stand &&
             nextRound.DealerHand.NumberValue < 17 && 
             nextRound.DealerHand.NumberValue <= nextRound.PlayerHand.NumberValue)

@@ -12,14 +12,14 @@ public class Deck
     {
         var cards = Enum.GetValues<Suit>().Select(suit => Enum.GetValues<CardValue>().Select(value => new Card(value: value, suit: suit))).SelectMany(card => card).ToArray();
         var deck = new Deck(cards.ToImmutableList<Card>());
-        
+
         return deck;
     }
 
-    public static Deck CreateShuffledDeck()
+    public static Deck CreateShuffledDeck(IShuffler random)
     {
         var cards = Enum.GetValues<Suit>().Select(suit => Enum.GetValues<CardValue>().Select(value => new Card(value: value, suit: suit))).SelectMany(card => card).ToArray();
-        Random.Shared.Shuffle(cards);
+        random.Shuffle(cards);
         var deck = new Deck(cards.ToImmutableList<Card>());
         
         return deck;

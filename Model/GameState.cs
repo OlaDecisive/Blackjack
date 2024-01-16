@@ -13,9 +13,9 @@ public class GameState
         VerifyInvariants();
     }
 
-    public static GameState CreateInitialGameState(string playerName)
+    public static GameState CreateInitialGameState(string playerName, IShuffler random)
     {
-        var intialDeck = Deck.CreateShuffledDeck();
+        var intialDeck = Deck.CreateShuffledDeck(random);
         var playerDealtDeck = intialDeck.TakeCardsFromTop(2, out var playerCards);
         var dealerDealtDeck = playerDealtDeck.TakeCardsFromTop(2, out var dealerCards);
 

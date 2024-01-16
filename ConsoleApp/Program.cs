@@ -2,7 +2,7 @@
 
 Console.WriteLine("Blackjack!");
 
-var game = new Game();
+var game = Game.CreateNewGame("player");
 
 Console.WriteLine(game.GetGameState());
 
@@ -28,5 +28,5 @@ while (game.State == GameState.Running)
     }
 }
 
-Console.WriteLine(game.GetDealerState());
+Console.WriteLine(game.DealerHand.DescribeHand());
 Console.WriteLine($"Gamestate: {game.State}");

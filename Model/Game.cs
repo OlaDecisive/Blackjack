@@ -1,5 +1,3 @@
-using System.Text.Json.Serialization;
-
 namespace Model;
 
 public enum GameState
@@ -42,6 +40,7 @@ public class Game
         game.PlayerHand = Hand.CreateHand([game.Deck.TakeCardFromTop(), game.Deck.TakeCardFromTop()]);
         game.DealerHand = Hand.CreateHand([game.Deck.TakeCardFromTop(), game.Deck.TakeCardFromTop()]);
 
+        game.VerifyInvariants();
 
         return game;
     }
@@ -57,6 +56,8 @@ public class Game
 
     public GameState EvaluateGameState()
     {
+        VerifyInvariants();
+        
         var playerSum = PlayerHand.NumberValue;
         var dealerSum = DealerHand.NumberValue;
 
@@ -109,5 +110,18 @@ public class Game
         if (dealerSum < 17)
              DealerHand.AddCard(Deck.TakeCardFromTop());
         State = EvaluateGameState();
+    }
+
+    private void VerifyInvariants()
+    {
+        var allCards = Deck.Cards.Concat(PlayerHand.Cards).Concat(DealerHand.Cards);
+
+        var duplicateCardGroups = allCards.GroupBy(card => (card.suit, card.Value)).Where(cardGroup => cardGroup.Count() > 1);
+        if (duplicateCardGroups.Any())
+            throw new Exception($"Found duplicate cards: {string.Join(", ", duplicateCardGroups.Select(cardGroup => cardGroup.First().Name))}");
+
+        var totalNumberOfCards = Deck.Cards.Count + PlayerHand.Cards.Count + DealerHand.Cards.Count;
+        if (totalNumberOfCards != 52)
+            throw new Exception($"Number of cards is {totalNumberOfCards}, should be 52. {Deck.Cards.Count} cards in deck, {PlayerHand.Cards.Count} cards in players hand, {DealerHand.Cards.Count} cards in dealers hand");
     }
 }

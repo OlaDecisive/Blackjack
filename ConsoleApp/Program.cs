@@ -2,9 +2,9 @@
 
 Console.WriteLine("Blackjack!");
 
-var game = Game.CreateNewGame("player");
+var game = new Game("player");
 
-Console.WriteLine(game.GetGameDescription());
+Console.WriteLine(game.GameDescription);
 
 while (game.Status == GameStatus.Running)
 {
@@ -13,13 +13,13 @@ while (game.Status == GameStatus.Running)
 
     if (command?.ToUpperInvariant().StartsWith("H") ?? false)
     {
-        game.ProgressGame(PlayerDecision.Hit);
-        Console.WriteLine(game.GetGameDescription());
+        game.Advance(PlayerDecision.Hit);
+        Console.WriteLine(game.GameDescription);
     }
     else if (command?.ToUpperInvariant().StartsWith("S") ?? false)
     {
-        game.ProgressGame(PlayerDecision.Stand);
-        Console.WriteLine(game.GetGameDescription());
+        game.Advance(PlayerDecision.Stand);
+        Console.WriteLine(game.GameDescription);
     }
     else
     {
@@ -28,5 +28,4 @@ while (game.Status == GameStatus.Running)
     }
 }
 
-Console.WriteLine(game.DealerHand.GetHandDescription());
-Console.WriteLine($"Gamestate: {game.Status}");
+Console.WriteLine($"Dealers final hand: {game.DealersFinalHandDescription}");

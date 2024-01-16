@@ -18,12 +18,12 @@ public enum Suit
 public class Card
 {
     public CardValue Value { get; }
-    public Suit suit { get; }
+    public Suit Suit { get; }
 
     public Card(CardValue value, Suit suit)
     {
         this.Value = value;
-        this.suit = suit;
+        this.Suit = suit;
     }
 
     public int NumberValue => Value switch
@@ -34,5 +34,5 @@ public class Card
         _ => (int)Value
     };
 
-    public string Name => $"{Value} of {suit}";
+    public string Name => $"{Value} of {Suit}";
 }

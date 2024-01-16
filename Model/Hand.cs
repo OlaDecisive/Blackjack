@@ -1,12 +1,16 @@
+using System.Collections.Immutable;
+
 namespace Model;
 
 public class Hand
 {
-    public IList<Card> Cards { get; set; } = [];
+    public IImmutableList<Card> Cards { get; }
 
-    public static Hand CreateHand(IList<Card> cards)
+    public Hand(IImmutableList<Card> cards) => Cards = cards;
+
+    public static Hand CreateHand(IImmutableList<Card> cards)
     {
-        var hand = new Hand() { Cards = cards };
+        var hand = new Hand(cards);
         return hand;
     }
 
@@ -28,8 +32,8 @@ public class Hand
 
     public int NumberValue => Cards.Select(card => card.NumberValue).Sum();
 
-    public void AddCard(Card card)
+    public Hand AddCard(Card card)
     {
-        Cards.Add(card);
+        return new Hand(Cards.Append(card).ToImmutableList());
     }
 }

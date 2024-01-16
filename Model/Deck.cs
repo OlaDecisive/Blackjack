@@ -1,27 +1,41 @@
+using System.Collections.Immutable;
+
 namespace Model;
 
 public class Deck
 {
-    public List<Card> Cards { get; set; } = [];
+    public IImmutableList<Card> Cards { get; }
 
-    public Deck()
-    {
-    }
+    public Deck(IImmutableList<Card> cards) => Cards = cards;
 
-    public static Deck CreateShuffledDeck()
+    public static Deck CreateOrderedDeck()
     {
-        var deck = new Deck();
-        
-        deck.Cards = Enum.GetValues<Suit>().Select(suit => Enum.GetValues<CardValue>().Select(value => new Card(value: value, suit: suit))).SelectMany(card => card).ToList();
-        deck.Cards = deck.Cards.OrderBy(card => Random.Shared.Next()).ToList(); // shuffle cards
+        var cards = Enum.GetValues<Suit>().Select(suit => Enum.GetValues<CardValue>().Select(value => new Card(value: value, suit: suit))).SelectMany(card => card).ToArray();
+        var deck = new Deck(cards.ToImmutableList<Card>());
         
         return deck;
     }
 
-    public Card TakeCardFromTop()
+    public static Deck CreateShuffledDeck()
     {
-        var selectedCard = Cards.First();
-        Cards.Remove(selectedCard);
-        return selectedCard;
+        var cards = Enum.GetValues<Suit>().Select(suit => Enum.GetValues<CardValue>().Select(value => new Card(value: value, suit: suit))).SelectMany(card => card).ToArray();
+        Random.Shared.Shuffle(cards);
+        var deck = new Deck(cards.ToImmutableList<Card>());
+        
+        return deck;
+    }
+
+    public Deck TakeCardFromTop(out Card selectedCard)
+    {
+        selectedCard = Cards.First();
+        var nextCards = Cards.Remove(selectedCard);
+        return new Deck(nextCards);
+    }
+
+    public Deck TakeCardsFromTop(int numberOfCards, out IImmutableList<Card> selectedCards)
+    {
+        selectedCards = Cards.Take(numberOfCards).ToImmutableList();
+        var nextCards = Cards.RemoveRange(0, numberOfCards);
+        return new Deck(nextCards);
     }
 }

@@ -34,16 +34,16 @@ app.MapPost("/game/{playerName}", (string playerName, HttpContext context) =>
     var json = context.Session.GetString($"game_{playerName}");
     Game? game;
     if (json == null)
-        game = Game.CreateNewGame(playerName);
+        game = new Game(playerName);
     else
         game = JsonSerializer.Deserialize<Game>(json);
     if (game == null)
-         game = Game.CreateNewGame(playerName);
+         game = new Game(playerName);
 
     json = JsonSerializer.Serialize(game);
     context.Session.SetString($"game_{playerName}", json);
 
-    return game.GetGameDescription();
+    return game.GameDescription;
 });
 
 app.MapPost("/game/{playerName}/Hit", async (string playerName, HttpContext context) =>
@@ -54,18 +54,14 @@ app.MapPost("/game/{playerName}/Hit", async (string playerName, HttpContext cont
     var rawRequestBody = await new StreamReader(context.Request.Body).ReadToEndAsync();
     context.Request.Body.Position = 0;
 #endif
-    //var game = await context.Request.ReadFromJsonAsync<Game>();
-    //game?.ProgressGameState(PlayerDecision.Hit);
-    //return game;
-
     var json = context.Session.GetString($"game_{playerName}");
     var game = JsonSerializer.Deserialize<Game>(json);
-    game.ProgressGame(PlayerDecision.Hit);
+    game.Advance(PlayerDecision.Hit);
 
     json = JsonSerializer.Serialize(game);
     context.Session.SetString($"game_{playerName}", json);
 
-    return game.GetGameDescription();
+    return game.GameDescription;
 });
 
 app.MapPost("/game/{playerName}/Stand", async (string playerName, HttpContext context) =>
@@ -76,14 +72,9 @@ app.MapPost("/game/{playerName}/Stand", async (string playerName, HttpContext co
     var rawRequestBody = await new StreamReader(context.Request.Body).ReadToEndAsync();
     context.Request.Body.Position = 0;
 #endif
-
-    //var game = await context.Request.ReadFromJsonAsync<Game>();
-    //game?.ProgressGameState(PlayerDecision.Stand);
-    //return game;
-
     var json = context.Session.GetString($"game_{playerName}");
-    var game = JsonSerializer.Deserialize<Game>(json);
-    game.ProgressGame(PlayerDecision.Stand);
+    var game = JsonSerializer.Deserialize<GameState>(json);
+    game.GetNextGameState(PlayerDecision.Stand);
 
     json = JsonSerializer.Serialize(game);
     context.Session.SetString($"game_{playerName}", json);

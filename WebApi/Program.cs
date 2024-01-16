@@ -43,7 +43,7 @@ app.MapPost("/game/{playerName}", (string playerName, HttpContext context) =>
     json = JsonSerializer.Serialize(game);
     context.Session.SetString($"game_{playerName}", json);
 
-    return game.GetGameState();
+    return game.GetGameDescription();
 });
 
 app.MapPost("/game/{playerName}/Hit", async (string playerName, HttpContext context) =>
@@ -60,12 +60,12 @@ app.MapPost("/game/{playerName}/Hit", async (string playerName, HttpContext cont
 
     var json = context.Session.GetString($"game_{playerName}");
     var game = JsonSerializer.Deserialize<Game>(json);
-    game.ProgressGameState(PlayerDecision.Hit);
+    game.ProgressGame(PlayerDecision.Hit);
 
     json = JsonSerializer.Serialize(game);
     context.Session.SetString($"game_{playerName}", json);
 
-    return game.GetGameState();
+    return game.GetGameDescription();
 });
 
 app.MapPost("/game/{playerName}/Stand", async (string playerName, HttpContext context) =>
@@ -83,12 +83,12 @@ app.MapPost("/game/{playerName}/Stand", async (string playerName, HttpContext co
 
     var json = context.Session.GetString($"game_{playerName}");
     var game = JsonSerializer.Deserialize<Game>(json);
-    game.ProgressGameState(PlayerDecision.Stand);
+    game.ProgressGame(PlayerDecision.Stand);
 
     json = JsonSerializer.Serialize(game);
     context.Session.SetString($"game_{playerName}", json);
 
-    return game.GetGameState();
+    return game.GetGameDescription();
 });
 
 app.Run();

@@ -10,7 +10,7 @@ public class Hand
         return hand;
     }
 
-    public string DescribeHand()
+    public string GetHandDescription()
     {
         var output = $"{string.Join(", ", Cards.Select(card => card.Name))}, adding up to {Cards.Select(card => card.NumberValue).Sum()}";
         if (Cards.Any(card => card.Value == CardValue.Ace))
@@ -18,7 +18,7 @@ public class Hand
         return output;
     }
 
-    public string DescribeDealerHand()
+    public string GetDealersHandDescription()
     {
         string output = $"Dealer has {Cards.Count} cards";
         if (Cards.Any())

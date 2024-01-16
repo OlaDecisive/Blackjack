@@ -1,6 +1,6 @@
 namespace Model;
 
-public enum GameState
+public enum GameStatus
 {
     Running,
     PlayerWins,
@@ -16,7 +16,7 @@ public enum PlayerDecision
 
 public class Game
 {
-    public GameState State { get; set; }
+    public GameStatus Status { get; set; }
 
     public string PlayerName { get; set; } = string.Empty;
 
@@ -24,16 +24,12 @@ public class Game
     public Hand PlayerHand { get; set; } = new Hand();
     public Hand DealerHand { get; set; } = new Hand();
 
-    public Game()
-    {
-    }
-
     public static Game CreateNewGame(string playerName)
     {
         var game = new Game
         {
             PlayerName = playerName,
-            State = GameState.Running,
+            Status = GameStatus.Running,
             Deck = Deck.CreateShuffledDeck()
         };
 
@@ -45,16 +41,16 @@ public class Game
         return game;
     }
 
-    public string GetGameState()
+    public string GetGameDescription()
     {
         var output = $"{Deck.Cards.Count} cards in deck";
-        output += $"\n{PlayerName} cards: {PlayerHand.DescribeHand()}";
-        output += $"\nDealer cards: {DealerHand.DescribeDealerHand()}";
-        output += $"\nGame state is: {State}";
+        output += $"\n{PlayerName} cards: {PlayerHand.GetHandDescription()}";
+        output += $"\nDealer cards: {DealerHand.GetDealersHandDescription()}";
+        output += $"\nGame status is: {Status}";
         return output;
     }
 
-    public GameState EvaluateGameState()
+    public GameStatus DetermineGameStatus()
     {
         VerifyInvariants();
         
@@ -62,24 +58,24 @@ public class Game
         var dealerSum = DealerHand.NumberValue;
 
         if (playerSum > 21 && dealerSum > 21)
-            return GameState.Tie;
+            return GameStatus.Tie;
         if (playerSum > 21)
-            return GameState.DealerWins;
+            return GameStatus.DealerWins;
         else if (dealerSum > 21)
-            return GameState.PlayerWins;
+            return GameStatus.PlayerWins;
         else if (dealerSum >= 17 && playerSum == dealerSum)
-            return GameState.Tie;
+            return GameStatus.Tie;
         else if (playerSum > dealerSum && dealerSum >= 17)
-            return GameState.PlayerWins;
+            return GameStatus.PlayerWins;
         else if (playerSum < dealerSum && dealerSum >= 17)
-            return GameState.DealerWins;
+            return GameStatus.DealerWins;
         else 
-            return GameState.Running;
+            return GameStatus.Running;
     }
 
-    public void ProgressGameState(PlayerDecision playerDecision)
+    public void ProgressGame(PlayerDecision playerDecision)
     {
-        if (State != GameState.Running)
+        if (Status != GameStatus.Running)
             return;
             
         if (playerDecision == PlayerDecision.Hit)
@@ -89,17 +85,17 @@ public class Game
         else if (playerDecision == PlayerDecision.Stand)
         {
             // dealer pulls cards until bust or win
-            // TODO: could this inner while loop be replaced by recursive calls to ProgressGameState?
-            while (State == GameState.Running)
+            // TODO: could this inner while loop be replaced by recursive calls to ProgressGame?
+            while (Status == GameStatus.Running)
             {
                 var dealerSumStand = DealerHand.NumberValue;
                 if (dealerSumStand < 17)
                      DealerHand.AddCard(Deck.TakeCardFromTop());
 
-                var previousState = State;
+                var previousStatus = Status;
                 var previousDealerSum = DealerHand.NumberValue;
-                State = EvaluateGameState();
-                if (State == previousState && previousDealerSum == DealerHand.NumberValue)
+                Status = DetermineGameStatus();
+                if (Status == previousStatus && previousDealerSum == DealerHand.NumberValue)
                 {
                     throw new Exception("Unchanged game state detected, aborting");
                 }
@@ -109,7 +105,7 @@ public class Game
         var dealerSum = DealerHand.NumberValue;
         if (dealerSum < 17)
              DealerHand.AddCard(Deck.TakeCardFromTop());
-        State = EvaluateGameState();
+        Status = DetermineGameStatus();
     }
 
     private void VerifyInvariants()

@@ -1,5 +1,5 @@
 using System.Text.Json;
-using Model;
+using Blackjack.Model;
 
 var builder = WebApplication.CreateBuilder(args);
 

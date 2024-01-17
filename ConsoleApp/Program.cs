@@ -1,4 +1,4 @@
-﻿using Model;
+﻿using Blackjack.Model;
 
 Console.WriteLine("Blackjack!");
 

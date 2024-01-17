@@ -1,4 +1,4 @@
-namespace Model;
+namespace Blackjack.Model;
 
 public enum CardValue
 {

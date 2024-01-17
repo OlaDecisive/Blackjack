@@ -1,7 +1,7 @@
 using System.Text.Json;
-using Model;
+using Blackjack.Model;
 
-namespace Test;
+namespace Blackjack.Test;
 
 public class TestModel
 {

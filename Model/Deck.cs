@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 
-namespace Model;
+namespace Blackjack.Model;
 
 public class Deck
 {

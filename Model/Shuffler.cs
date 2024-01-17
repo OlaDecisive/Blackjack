@@ -1,3 +1,5 @@
+namespace Blackjack.Model;
+
 public interface IShuffler
 {
     void Shuffle<Type>(Type[] values);

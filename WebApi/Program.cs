@@ -83,3 +83,5 @@ app.MapPost("/game/{playerName}/Stand", async (string playerName, HttpContext co
 });
 
 app.Run();
+
+public partial class Program {}

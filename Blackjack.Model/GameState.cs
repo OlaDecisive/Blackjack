@@ -2,10 +2,19 @@ namespace Blackjack.Model;
 
 public class GameState
 {
-    public string PlayerName { get; }
+    public Guid Id { get; set; }
+    public string PlayerName { get; private set; }
     public Deck Deck { get; }
     public Hand PlayerHand { get; }
     public Hand DealerHand { get; }
+
+    private GameState() 
+    {
+        PlayerName = default!;
+        Deck = default!;
+        PlayerHand = default!;
+        DealerHand = default!;
+    }
 
     public GameState(string playerName, Deck deck, Hand playerHand, Hand dealerHand)
     {

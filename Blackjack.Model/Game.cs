@@ -19,8 +19,11 @@ public enum PlayerDecision
 
 public class Game
 {
-    public IList<GameState> Rounds { get; }
+    public Guid Id { get; set; }
+    public IList<GameState> Rounds { get; private set; }
     
+    private Game() { Rounds = default!; }
+
     public Game(string playerName) : this(playerName, new RandomShuffler()) {}
 
     public Game(string playerName, IShuffler random)

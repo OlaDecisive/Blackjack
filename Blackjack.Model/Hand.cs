@@ -4,7 +4,10 @@ namespace Blackjack.Model;
 
 public class Hand
 {
-    public IImmutableList<Card> Cards { get; }
+    public Guid Id { get; set; }
+    public IImmutableList<Card> Cards { get; private set; }
+
+    private Hand() { Cards = default!; }
 
     public Hand(IImmutableList<Card> cards) => Cards = cards;
 

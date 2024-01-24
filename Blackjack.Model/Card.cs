@@ -17,13 +17,11 @@ public enum Suit
     Diamonds
 }
 
-[PrimaryKey(nameof(Suit), nameof(Value))]
 public class Card
 {
+    public Guid Id { get; set; }
     public CardValue Value { get; private set; }
     public Suit Suit { get; private set; }
-
-    private Card() {}
 
     public Card(CardValue value, Suit suit)
     {

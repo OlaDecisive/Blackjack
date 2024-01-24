@@ -15,8 +15,14 @@ public class BlackjackContext : DbContext
     //public DbSet<CardValue> CardValues { get; set; }
     //public DbSet<Suit> Suits { get; set; }
 
-
     public BlackjackContext()
+    {
+        var folder = Environment.SpecialFolder.LocalApplicationData;
+        var path = Environment.GetFolderPath(folder);
+        DbPath = System.IO.Path.Join(path, "blackjack.db");
+    }
+
+    public BlackjackContext(DbContextOptions<BlackjackContext> dbContext) : base(dbContext)
     {
         var folder = Environment.SpecialFolder.LocalApplicationData;
         var path = Environment.GetFolderPath(folder);
@@ -30,15 +36,6 @@ public class BlackjackContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        /*modelBuilder.Entity<Deck>(buildAction => 
-        {
-            //buildAction.OwnsOne(deck => deck.Cards)
-            //buildAction.OwnsMany<Card>("ownedTypeName", "navigationName");
-            buildAction.OwnsMany<Card>(deck => deck.Cards, deck => 
-            {
-                return deck.Cards;
-            });
-        });*/
         base.OnModelCreating(modelBuilder);
     }
 }

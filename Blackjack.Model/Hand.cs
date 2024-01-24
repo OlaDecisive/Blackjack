@@ -1,21 +1,13 @@
-using System.Collections.Immutable;
-
 namespace Blackjack.Model;
 
 public class Hand
 {
     public Guid Id { get; set; }
-    public IImmutableList<Card> Cards { get; private set; }
+    public List<Card> Cards { get; private set; }
 
     private Hand() { Cards = default!; }
 
-    public Hand(IImmutableList<Card> cards) => Cards = cards;
-
-    public static Hand CreateHand(IImmutableList<Card> cards)
-    {
-        var hand = new Hand(cards);
-        return hand;
-    }
+    public Hand(List<Card> cards) => Cards = cards;
 
     public string GetHandDescription()
     {
@@ -35,8 +27,8 @@ public class Hand
 
     public int NumberValue => Cards.Select(card => card.NumberValue).Sum();
 
-    public Hand AddCard(Card card)
+    public void AddCard(Card card)
     {
-        return new Hand(Cards.Append(card).ToImmutableList());
+        Cards.Add(card);
     }
 }

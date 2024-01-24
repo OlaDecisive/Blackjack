@@ -3,6 +3,7 @@ using System;
 using Blackjack.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,18 +11,22 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Blackjack.Model.Migrations
 {
     [DbContext(typeof(BlackjackContext))]
-    partial class BlackjackContextModelSnapshot : ModelSnapshot
+    [Migration("20240124134509_AddStatusToGame")]
+    partial class AddStatusToGame
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.1");
 
             modelBuilder.Entity("Blackjack.Model.Card", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("Suit")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Value")
+                        .HasColumnType("INTEGER");
 
                     b.Property<Guid?>("DeckId")
                         .HasColumnType("TEXT");
@@ -29,13 +34,7 @@ namespace Blackjack.Model.Migrations
                     b.Property<Guid?>("HandId")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Suit")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Value")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
+                    b.HasKey("Suit", "Value");
 
                     b.HasIndex("DeckId");
 
@@ -61,9 +60,6 @@ namespace Blackjack.Model.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("CurrentRoundId")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("PlayerName")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -72,8 +68,6 @@ namespace Blackjack.Model.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CurrentRoundId");
 
                     b.ToTable("Games");
                 });
@@ -84,22 +78,12 @@ namespace Blackjack.Model.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("DealerHandId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("DeckId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("PlayerHandId")
+                    b.Property<Guid?>("GameId")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DealerHandId");
-
-                    b.HasIndex("DeckId");
-
-                    b.HasIndex("PlayerHandId");
+                    b.HasIndex("GameId");
 
                     b.ToTable("GameStates");
                 });
@@ -126,47 +110,21 @@ namespace Blackjack.Model.Migrations
                         .HasForeignKey("HandId");
                 });
 
-            modelBuilder.Entity("Blackjack.Model.Game", b =>
-                {
-                    b.HasOne("Blackjack.Model.GameState", "CurrentRound")
-                        .WithMany()
-                        .HasForeignKey("CurrentRoundId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CurrentRound");
-                });
-
             modelBuilder.Entity("Blackjack.Model.GameState", b =>
                 {
-                    b.HasOne("Blackjack.Model.Hand", "DealerHand")
-                        .WithMany()
-                        .HasForeignKey("DealerHandId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Blackjack.Model.Deck", "Deck")
-                        .WithMany()
-                        .HasForeignKey("DeckId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Blackjack.Model.Hand", "PlayerHand")
-                        .WithMany()
-                        .HasForeignKey("PlayerHandId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("DealerHand");
-
-                    b.Navigation("Deck");
-
-                    b.Navigation("PlayerHand");
+                    b.HasOne("Blackjack.Model.Game", null)
+                        .WithMany("Rounds")
+                        .HasForeignKey("GameId");
                 });
 
             modelBuilder.Entity("Blackjack.Model.Deck", b =>
                 {
                     b.Navigation("Cards");
+                });
+
+            modelBuilder.Entity("Blackjack.Model.Game", b =>
+                {
+                    b.Navigation("Rounds");
                 });
 
             modelBuilder.Entity("Blackjack.Model.Hand", b =>

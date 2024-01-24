@@ -1,20 +1,18 @@
-using System.Collections.Immutable;
-
 namespace Blackjack.Model;
 
 public class Deck
 {
     public Guid Id { get; set; }
-    public IImmutableList<Card> Cards { get; private set; }
+    public List<Card> Cards { get; private set; }
 
     private Deck() { Cards = default!; }
 
-    public Deck(IImmutableList<Card> cards) => Cards = cards;
+    public Deck(List<Card> cards) => Cards = cards;
 
     public static Deck CreateOrderedDeck()
     {
         var cards = Enum.GetValues<Suit>().Select(suit => Enum.GetValues<CardValue>().Select(value => new Card(value: value, suit: suit))).SelectMany(card => card).ToArray();
-        var deck = new Deck(cards.ToImmutableList<Card>());
+        var deck = new Deck(cards.ToList<Card>());
 
         return deck;
     }
@@ -23,22 +21,22 @@ public class Deck
     {
         var cards = Enum.GetValues<Suit>().Select(suit => Enum.GetValues<CardValue>().Select(value => new Card(value: value, suit: suit))).SelectMany(card => card).ToArray();
         random.Shuffle(cards);
-        var deck = new Deck(cards.ToImmutableList<Card>());
+        var deck = new Deck(cards.ToList<Card>());
         
         return deck;
     }
 
-    public Deck TakeCardFromTop(out Card selectedCard)
+    public Card TakeCardFromTop()
     {
-        selectedCard = Cards.First();
-        var nextCards = Cards.Remove(selectedCard);
-        return new Deck(nextCards);
+        var selectedCard = Cards.First();
+        Cards.Remove(selectedCard);
+        return selectedCard;
     }
 
-    public Deck TakeCardsFromTop(int numberOfCards, out IImmutableList<Card> selectedCards)
+    public List<Card> TakeCardsFromTop(int numberOfCards)
     {
-        selectedCards = Cards.Take(numberOfCards).ToImmutableList();
-        var nextCards = Cards.RemoveRange(0, numberOfCards);
-        return new Deck(nextCards);
+        var selectedCards = Cards.Take(numberOfCards).ToList();
+        Cards.RemoveRange(0, numberOfCards);
+        return selectedCards;
     }
 }

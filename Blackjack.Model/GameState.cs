@@ -3,41 +3,38 @@ namespace Blackjack.Model;
 public class GameState
 {
     public Guid Id { get; set; }
-    public string PlayerName { get; private set; }
-    public Deck Deck { get; }
-    public Hand PlayerHand { get; }
-    public Hand DealerHand { get; }
+    public Deck Deck { get; private set; }
+    public Hand PlayerHand { get; private set; }
+    public Hand DealerHand { get; private set; }
 
     private GameState() 
     {
-        PlayerName = default!;
         Deck = default!;
         PlayerHand = default!;
         DealerHand = default!;
     }
 
-    public GameState(string playerName, Deck deck, Hand playerHand, Hand dealerHand)
+    public GameState(Deck deck, Hand playerHand, Hand dealerHand)
     {
-        (PlayerName, Deck, PlayerHand, DealerHand) = (playerName, deck, playerHand, dealerHand);
+        (Deck, PlayerHand, DealerHand) = (deck, playerHand, dealerHand);
         VerifyInvariants();
     }
 
-    public static GameState CreateInitialGameState(string playerName, IShuffler random)
+    public static GameState CreateInitialGameState(Game game, IShuffler random)
     {
-        var intialDeck = Deck.CreateShuffledDeck(random);
-        var playerDealtDeck = intialDeck.TakeCardsFromTop(2, out var playerCards);
-        var dealerDealtDeck = playerDealtDeck.TakeCardsFromTop(2, out var dealerCards);
+        var deck = Deck.CreateShuffledDeck(random);
+        var playerCards = deck.TakeCardsFromTop(2);
+        var dealerCards = deck.TakeCardsFromTop(2);
 
-        var playerHand = Hand.CreateHand(playerCards);
-        var dealerHand = Hand.CreateHand(dealerCards);
+        var playerHand = new Hand(playerCards);
+        var dealerHand = new Hand(dealerCards);
 
-        return new GameState(playerName, dealerDealtDeck, playerHand, dealerHand);
+        return new GameState(deck, playerHand, dealerHand);
     }
 
-    public string GetGameDescription()
+    public string GetGameStateDescription()
     {
         var output = $"{Deck.Cards.Count} cards in deck";
-        output += $"\n{PlayerName} cards: {PlayerHand.GetHandDescription()}";
         output += $"\nDealer cards: {DealerHand.GetDealersHandDescription()}";
         output += $"\nGame status is: {DetermineGameStatus()}";
         return output;
@@ -63,29 +60,27 @@ public class GameState
             return GameStatus.DealerWins;
         else 
             return GameStatus.Running;
-    }
+    }   
 
-    public GameState GetNextGameState(PlayerDecision playerDecision)
+    public void DealCards(PlayerDecision playerDecision)
     {
         if (DetermineGameStatus() != GameStatus.Running)
-            return this;
-            
-        var nextDeck = Deck;
+            return;
+
         var nextPlayerHand = PlayerHand;
         var nextDealerHand = DealerHand;
 
         if (playerDecision == PlayerDecision.Hit)
         {
-            nextDeck = nextDeck.TakeCardFromTop(out var cardForPlayer);
-            nextPlayerHand = nextPlayerHand.AddCard(cardForPlayer);
+            var cardForPlayer = Deck.TakeCardFromTop();
+            PlayerHand.AddCard(cardForPlayer);
         }
 
         if (nextDealerHand.NumberValue < 17 && nextDealerHand.NumberValue <= nextPlayerHand.NumberValue)
         {
-            nextDeck = nextDeck.TakeCardFromTop(out var cardForDealer);
-            nextDealerHand = nextDealerHand.AddCard(cardForDealer);
+            var cardForDealer = Deck.TakeCardFromTop();
+            DealerHand.AddCard(cardForDealer);
         }
-        return new GameState(PlayerName, nextDeck, nextPlayerHand, nextDealerHand);
     }
 
     private void VerifyInvariants()

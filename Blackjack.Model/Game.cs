@@ -20,42 +20,59 @@ public enum PlayerDecision
 public class Game
 {
     public Guid Id { get; set; }
-    public IList<GameState> Rounds { get; private set; }
+    public string PlayerName { get; set; }
+    public GameState CurrentRound { get; set; }
     
-    private Game() { Rounds = default!; }
+    public Game() 
+    {
+        PlayerName = default!;
+        CurrentRound = default!;
+    }
 
-    public Game(string playerName) : this(playerName, new RandomShuffler()) {}
+    //public Game(string playerName) : this(playerName, new RandomShuffler()) {}
+    public static Game CreateGameWithShuffledCards(string playerName)
+    {
+        return new Game(playerName, new RandomShuffler());
+    }
 
     public Game(string playerName, IShuffler random)
     {
-        Rounds = [GameState.CreateInitialGameState(playerName, random)];
+        PlayerName = playerName;
+        CurrentRound = GameState.CreateInitialGameState(this, random);
     }
 
-    [JsonConstructor]
-    public Game(IList<GameState> rounds)
+    public string GetPlayerDescription()
     {
-        Rounds = rounds;
+        var output = $"{PlayerName} cards: {CurrentRound.PlayerHand.GetHandDescription()}";
+        return output;
     }
 
     public void Advance(PlayerDecision playerDecision)
     {
-        var nextRound = Rounds.Last().GetNextGameState(playerDecision);
-        Rounds.Add(nextRound);
-
+        CurrentRound.DealCards(playerDecision);
+        
         // If player stands, dealer hits until dealer cards are >= 17 or greater than players cards
         // TODO: dealer shouldn't know about players hand?
         if (playerDecision == PlayerDecision.Stand &&
-            nextRound.DealerHand.NumberValue < 17 && 
-            nextRound.DealerHand.NumberValue <= nextRound.PlayerHand.NumberValue)
+            CurrentRound.DealerHand.NumberValue < 17 && 
+            CurrentRound.DealerHand.NumberValue <= CurrentRound.PlayerHand.NumberValue)
         {
             Advance(playerDecision);
         }
     }
 
     [JsonIgnore]
-    public GameStatus Status => Rounds.Last().DetermineGameStatus();
+    public GameStatus Status
+    {
+        get
+        {
+            return CurrentRound?.DetermineGameStatus() ?? GameStatus.Unknown;
+        }
+        private set {}
+    }
+
     [JsonIgnore]
-    public string GameDescription => Rounds.Last().GetGameDescription();
+    public string GameDescription => string.Join("\n", GetPlayerDescription(), CurrentRound.GetGameStateDescription());
     [JsonIgnore]
-    public string DealersFinalHandDescription => Rounds.Last().DealerHand.GetHandDescription();
+    public string DealersFinalHandDescription => CurrentRound.DealerHand.GetHandDescription();
 }

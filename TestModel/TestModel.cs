@@ -8,21 +8,17 @@ public class TestModel
     [Fact]
     public void TestCreateInitialGameState()
     {
-        // Arrange
-        var playerName = "tester";
-        
-        // Act
-        var game = GameState.CreateInitialGameState(playerName, new DoNothingShuffler());
+        // Arrange & Act
+        var game = new Game("tester", new DoNothingShuffler());
 
         // Assert
-        Assert.Equal(playerName, game.PlayerName);
-        Assert.Equal(52 - 2 - 2, game.Deck.Cards.Count); // At start of game, two cards are dealt to player, two to dealer
+        Assert.Equal(52 - 2 - 2, game.CurrentRound.Deck.Cards.Count); // At start of game, two cards are dealt to player, two to dealer
     }
 
     [Fact]
     public void TestSerialization()
     {
-        var game = new Game("tester");
+        var game = Game.CreateGameWithShuffledCards("tester");
 
         var gameJson = JsonSerializer.Serialize<Game>(game);
         var deserializedGame = JsonSerializer.Deserialize<Game>(gameJson);
@@ -38,11 +34,10 @@ public class TestModel
         var playerName = "tester";
         
         // Act
-        var game = new Game("tester", new DoNothingShuffler());
+        var game = new Game(playerName, new DoNothingShuffler());
         
         // Assert
-        Assert.True(game.Rounds.All(round => round.PlayerName == playerName));
-        Assert.Equal(52 - 2 - 2, game.Rounds.First().Deck.Cards.Count); // At start of game, two cards are dealt to player, two to dealer
+        Assert.Equal(52 - 2 - 2, game.CurrentRound.Deck.Cards.Count); // At start of game, two cards are dealt to player, two to dealer
     }
 
     [Fact]
@@ -52,14 +47,13 @@ public class TestModel
         var playerName = "tester";
         
         // Act
-        var game = new Game("tester", new DoNothingShuffler());
+        var game = new Game(playerName, new DoNothingShuffler());
         game.Advance(PlayerDecision.Hit);
 
         // Assert
-        Assert.Equal(2, game.Rounds.Count);
-        Assert.True(game.Rounds.All(round => round.PlayerName == playerName));
-        Assert.Equal(52 - 2 - 2, game.Rounds.First().Deck.Cards.Count); // At start of game, two cards are dealt to player, two to dealer
-        Assert.Equal(52 - 2 - 2 - 2, game.Rounds.Last().Deck.Cards.Count); // After one round, one extra card is dealt to the player, one to the dealer
+        //Assert.Equal(2, game.Rounds.Count);
+        //Assert.Equal(52 - 2 - 2, game.CurrentRound.Deck.Cards.Count); // At start of game, two cards are dealt to player, two to dealer
+        Assert.Equal(52 - 2 - 2 - 2, game.CurrentRound.Deck.Cards.Count); // After one round, one extra card is dealt to the player, one to the dealer
 
         Assert.Equal(GameStatus.Running, game.Status);
         Assert.Contains("deck", game.GameDescription);
@@ -71,15 +65,14 @@ public class TestModel
     {
         // Arrange
         var playerName = "tester";
-        var game = new Game("tester", new DoNothingShuffler());
+        var game = new Game(playerName, new DoNothingShuffler());
 
         // Act
         game.Advance(PlayerDecision.Stand);
 
         // Assert
-        Assert.Equal(2, game.Rounds.Count);
-        Assert.True(game.Rounds.All(round => round.PlayerName == playerName));
-        Assert.Equal(52 - 2 - 2, game.Rounds.First().Deck.Cards.Count); // At start of game, two cards are dealt to player, two to dealer
+        //Assert.Equal(2, game.Rounds.Count);
+        Assert.Equal(52 - 2 - 2, game.CurrentRound.Deck.Cards.Count); // At start of game, two cards are dealt to player, two to dealer
         //Assert.Equal(52 - 2 - 2 - 2, game.Rounds.Last().Deck.Cards.Count); // After one round, one extra card is dealt to the player, one to the dealer
     }
 }

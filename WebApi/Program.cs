@@ -33,6 +33,48 @@ app.UseHttpsRedirection();
 
 app.UseSession();
 
+app.MapGet("/game/{playerName}", async (string playerName, HttpContext context) =>
+{
+    using (var client = new BlackjackContext())
+    {
+        var game = client.Games.Include(game => game.CurrentRound)
+                                   .ThenInclude(gameState => gameState.Deck)
+                                   .ThenInclude(deck => deck.Cards)
+                               .Include(game => game.CurrentRound)
+                                   .ThenInclude(gameState => gameState.DealerHand)
+                                   .ThenInclude(hand => hand.Cards)
+                               .Include(game => game.CurrentRound)
+                                   .ThenInclude(gameState => gameState.PlayerHand)
+                                   .ThenInclude(hand => hand.Cards)
+                         .SingleOrDefault(game => game.PlayerName == playerName && game.Status == GameStatus.Running);
+        if (game == null)
+        {
+            var oldGames = client.Games.Include(game => game.CurrentRound)
+                                   .ThenInclude(gameState => gameState.Deck)
+                                   .ThenInclude(deck => deck.Cards)
+                               .Include(game => game.CurrentRound)
+                                   .ThenInclude(gameState => gameState.DealerHand)
+                                   .ThenInclude(hand => hand.Cards)
+                               .Include(game => game.CurrentRound)
+                                   .ThenInclude(gameState => gameState.PlayerHand)
+                                   .ThenInclude(hand => hand.Cards)
+                         .Where(game => game.PlayerName == playerName && game.Status != GameStatus.Running);
+            if (oldGames?.Any() ?? false)
+            {
+                return $"Found {oldGames.Count()} finished games for {playerName}. {oldGames.Count(game => game.Status == GameStatus.PlayerWins)} wins, {oldGames.Count(game => game.Status == GameStatus.DealerWins)} losses, {oldGames.Count(game => game.Status == GameStatus.Tie)} ties";
+            }
+            else
+            {
+                return $"No games found for {playerName}";
+            }
+        }
+        else
+        {
+            return game.GameDescription;
+        }
+    }
+});
+
 app.MapPost("/game/{playerName}", async (string playerName, HttpContext context) =>
 {
     // var json = context.Session.GetString($"game_{playerName}");

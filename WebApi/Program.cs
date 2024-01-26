@@ -1,4 +1,3 @@
-using System.Text.Json;
 using Blackjack.Model;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,8 +16,7 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
-var sqliteDbPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "blackjack.db");
-builder.Services.AddSqlite<BlackjackContext>($"Data Source={sqliteDbPath}");
+builder.Services.AddSqlite<BlackjackContext>($"Data Source=:memory:");
 
 var app = builder.Build();
 

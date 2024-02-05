@@ -2,7 +2,7 @@
 
 Console.WriteLine("Blackjack!");
 
-var game = new Game("player");
+var game = Game.CreateGameWithShuffledCards("player");
 
 Console.WriteLine(game.GameDescription);
 

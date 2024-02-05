@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "undefined/subscriptions/4bab3096-af2f-4447-ae5e-77387d70b476/resourceGroups/rg-ola-blackjack/providers/Microsoft.Web/sites/app-ola-blackjack",
+    "appService.deploySubpath": "WebApi/bin/Release/net8.0/publish/"
+}

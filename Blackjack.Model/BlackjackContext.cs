@@ -31,7 +31,10 @@ public class BlackjackContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlite($"Data Source={DbPath}");
+        //optionsBuilder.UseSqlite($"Data Source={DbPath}");
+        
+        var pgsqlConnectionString = System.Environment.GetEnvironmentVariable("POSTGRESQLCONNSTR_");
+        optionsBuilder.UseNpgsql(pgsqlConnectionString);
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

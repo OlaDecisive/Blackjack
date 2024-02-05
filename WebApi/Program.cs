@@ -16,7 +16,8 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
-builder.Services.AddSqlite<BlackjackContext>($"Data Source=:memory:");
+var pgsqlConnectionString = System.Environment.GetEnvironmentVariable("POSTGRESQLCONNSTR_");
+builder.Services.AddNpgsql<BlackjackContext>(pgsqlConnectionString);
 
 var app = builder.Build();
 

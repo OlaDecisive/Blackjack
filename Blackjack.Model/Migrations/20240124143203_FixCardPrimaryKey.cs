@@ -18,7 +18,7 @@ namespace Blackjack.Model.Migrations
             migrationBuilder.AddColumn<Guid>(
                 name: "Id",
                 table: "Cards",
-                type: "TEXT",
+                type: "uuid",
                 nullable: false,
                 defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
 

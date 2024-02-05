@@ -26,7 +26,7 @@ namespace Blackjack.Model.Migrations
             migrationBuilder.AddColumn<Guid>(
                 name: "CurrentRoundId",
                 table: "Games",
-                type: "TEXT",
+                type: "uuid",
                 nullable: false,
                 defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
 
@@ -62,7 +62,7 @@ namespace Blackjack.Model.Migrations
             migrationBuilder.AddColumn<Guid>(
                 name: "GameId",
                 table: "GameStates",
-                type: "TEXT",
+                type: "uuid",
                 nullable: false,
                 defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
 

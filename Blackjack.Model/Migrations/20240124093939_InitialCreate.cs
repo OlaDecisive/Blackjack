@@ -15,7 +15,7 @@ namespace Blackjack.Model.Migrations
                 name: "Decks",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -26,7 +26,7 @@ namespace Blackjack.Model.Migrations
                 name: "Games",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -37,7 +37,7 @@ namespace Blackjack.Model.Migrations
                 name: "Hands",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -48,9 +48,9 @@ namespace Blackjack.Model.Migrations
                 name: "GameStates",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     PlayerName = table.Column<string>(type: "TEXT", nullable: false),
-                    GameId = table.Column<Guid>(type: "TEXT", nullable: true)
+                    GameId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -68,8 +68,8 @@ namespace Blackjack.Model.Migrations
                 {
                     Value = table.Column<int>(type: "INTEGER", nullable: false),
                     Suit = table.Column<int>(type: "INTEGER", nullable: false),
-                    DeckId = table.Column<Guid>(type: "TEXT", nullable: true),
-                    HandId = table.Column<Guid>(type: "TEXT", nullable: true)
+                    DeckId = table.Column<Guid>(type: "uuid", nullable: true),
+                    HandId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {

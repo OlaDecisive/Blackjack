@@ -18,31 +18,31 @@ namespace Blackjack.Model.Migrations
             migrationBuilder.AlterColumn<Guid>(
                 name: "GameId",
                 table: "GameStates",
-                type: "TEXT",
+                type: "uuid",
                 nullable: false,
                 defaultValue: new Guid("00000000-0000-0000-0000-000000000000"),
                 oldClrType: typeof(Guid),
-                oldType: "TEXT",
+                oldType: "uuid",
                 oldNullable: true);
 
             migrationBuilder.AddColumn<Guid>(
                 name: "DealerHandId",
                 table: "GameStates",
-                type: "TEXT",
+                type: "uuid",
                 nullable: false,
                 defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
 
             migrationBuilder.AddColumn<Guid>(
                 name: "DeckId",
                 table: "GameStates",
-                type: "TEXT",
+                type: "uuid",
                 nullable: false,
                 defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
 
             migrationBuilder.AddColumn<Guid>(
                 name: "PlayerHandId",
                 table: "GameStates",
-                type: "TEXT",
+                type: "uuid",
                 nullable: false,
                 defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
 
@@ -140,10 +140,10 @@ namespace Blackjack.Model.Migrations
             migrationBuilder.AlterColumn<Guid>(
                 name: "GameId",
                 table: "GameStates",
-                type: "TEXT",
+                type: "uuid",
                 nullable: true,
                 oldClrType: typeof(Guid),
-                oldType: "TEXT");
+                oldType: "uuid");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_GameStates_Games_GameId",

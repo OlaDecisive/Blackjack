@@ -6,21 +6,23 @@ public class GameState
     public Deck Deck { get; private set; }
     public Hand PlayerHand { get; private set; }
     public Hand DealerHand { get; private set; }
+    public DateTime Timestamp { get; private set; }
 
     private GameState() 
     {
         Deck = default!;
         PlayerHand = default!;
         DealerHand = default!;
+        Timestamp = default!;
     }
 
-    public GameState(Deck deck, Hand playerHand, Hand dealerHand)
+    public GameState(Deck deck, Hand playerHand, Hand dealerHand, DateTime timestamp)
     {
-        (Deck, PlayerHand, DealerHand) = (deck, playerHand, dealerHand);
+        (Deck, PlayerHand, DealerHand, Timestamp) = (deck, playerHand, dealerHand, timestamp);
         VerifyInvariants();
     }
 
-    public static GameState CreateInitialGameState(Game game, IShuffler random)
+    public static GameState CreateInitialGameState(Game game, IShuffler random, DateTime timestamp)
     {
         var deck = Deck.CreateShuffledDeck(random);
         var playerCards = deck.TakeCardsFromTop(2);
@@ -29,7 +31,7 @@ public class GameState
         var playerHand = new Hand(playerCards);
         var dealerHand = new Hand(dealerCards);
 
-        return new GameState(deck, playerHand, dealerHand);
+        return new GameState(deck, playerHand, dealerHand, timestamp);
     }
 
     public string GetGameStateDescription()

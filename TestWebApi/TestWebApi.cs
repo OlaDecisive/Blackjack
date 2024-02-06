@@ -8,7 +8,7 @@ public class TestWebApi
     [Fact]
     public async Task TestNewGame()
     {
-        var playerName = "tester";
+        var playerName = "DeterministicTester";
 
         await using var application = new WebApplicationFactory<Program>();
         using var client = application.CreateClient();

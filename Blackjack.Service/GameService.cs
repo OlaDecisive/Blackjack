@@ -36,12 +36,17 @@ public class GameService : IDisposable
         }
     }
 
-    public async Task<GameView> CreateNewGameAsync(string playerName)
+    public async Task<GameView> CreateNewGameAsync(string playerName, bool deterministicGame = false)
     {
         if (await GetRunningGameAsync(playerName) != null)
             throw new Exception("Cannot create new game when there is already a running game");
 
-        var game = Blackjack.Model.Game.CreateGameWithShuffledCards(playerName);
+        Game game;
+        if (deterministicGame)
+            game = Blackjack.Model.Game.CreateDeterministicGame(playerName, DateTime.UtcNow);
+        else
+            game = Blackjack.Model.Game.CreateGameWithShuffledCards(playerName);
+            
         Context.Games.Add(game);
         await Context.SaveChangesAsync();
         return (await GetRunningGameViewAsync(playerName))!;
@@ -89,6 +94,21 @@ public class GameService : IDisposable
                                 .ThenInclude(gameState => gameState.PlayerHand)
                                 .ThenInclude(hand => hand.Cards)
                         .SingleOrDefaultAsync(game => game.PlayerName == playerName && game.Status == GameStatus.Running);
+    }
+
+    private async Task<Game?> GetLatestGameAsync(string playerName)
+    {
+        return await Context.Games.Include(game => game.CurrentRound)
+                                .ThenInclude(gameState => gameState.Deck)
+                                .ThenInclude(deck => deck.Cards)
+                            .Include(game => game.CurrentRound)
+                                .ThenInclude(gameState => gameState.DealerHand)
+                                .ThenInclude(hand => hand.Cards)
+                            .Include(game => game.CurrentRound)
+                                .ThenInclude(gameState => gameState.PlayerHand)
+                                .ThenInclude(hand => hand.Cards)
+                        .OrderByDescending(game => game.CurrentRound.Timestamp)
+                        .FirstOrDefaultAsync(game => game.PlayerName == playerName);
     }
 
     public void Dispose()

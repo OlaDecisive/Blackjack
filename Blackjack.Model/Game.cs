@@ -29,16 +29,20 @@ public class Game
         CurrentRound = default!;
     }
 
-    //public Game(string playerName) : this(playerName, new RandomShuffler()) {}
     public static Game CreateGameWithShuffledCards(string playerName)
     {
-        return new Game(playerName, new RandomShuffler());
+        return new Game(playerName, new RandomShuffler(), DateTime.UtcNow);
     }
 
-    public Game(string playerName, IShuffler random)
+    public static Game CreateDeterministicGame(string playerName, DateTime timestamp)
+    {
+        return new Game(playerName, new DoNothingShuffler(), timestamp);
+    }
+
+    public Game(string playerName, IShuffler random, DateTime timestamp)
     {
         PlayerName = playerName;
-        CurrentRound = GameState.CreateInitialGameState(this, random);
+        CurrentRound = GameState.CreateInitialGameState(this, random, timestamp);
     }
 
     public string GetPlayerDescription()

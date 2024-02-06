@@ -43,7 +43,8 @@ app.MapGet("/game/{playerName}", async (string playerName, HttpContext context) 
 app.MapPost("/game/{playerName}", async (string playerName, HttpContext context) =>
 {
     using var service = new GameService();
-    var runningGame = await service.GetRunningGameViewAsync(playerName) ?? await service.CreateNewGameAsync(playerName);
+    var deterministicGame = playerName == "DeterministicTester";
+    var runningGame = await service.GetRunningGameViewAsync(playerName) ?? await service.CreateNewGameAsync(playerName, deterministicGame);
     return runningGame;
 });
 

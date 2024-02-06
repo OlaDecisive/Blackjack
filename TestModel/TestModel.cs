@@ -9,7 +9,7 @@ public class TestModel
     public void TestCreateInitialGameState()
     {
         // Arrange & Act
-        var game = new Game("tester", new DoNothingShuffler());
+        var game = Game.CreateDeterministicGame("tester", DateTime.UtcNow);
 
         // Assert
         Assert.Equal(52 - 2 - 2, game.CurrentRound.Deck.Cards.Count); // At start of game, two cards are dealt to player, two to dealer
@@ -18,7 +18,7 @@ public class TestModel
     [Fact]
     public void TestSerialization()
     {
-        var game = Game.CreateGameWithShuffledCards("tester");
+        var game = Game.CreateDeterministicGame("tester", DateTime.UtcNow);
 
         var gameJson = JsonSerializer.Serialize<Game>(game);
         var deserializedGame = JsonSerializer.Deserialize<Game>(gameJson);
@@ -34,7 +34,7 @@ public class TestModel
         var playerName = "tester";
         
         // Act
-        var game = new Game(playerName, new DoNothingShuffler());
+        var game = Game.CreateDeterministicGame(playerName, DateTime.UtcNow);
         
         // Assert
         Assert.Equal(52 - 2 - 2, game.CurrentRound.Deck.Cards.Count); // At start of game, two cards are dealt to player, two to dealer
@@ -47,7 +47,7 @@ public class TestModel
         var playerName = "tester";
         
         // Act
-        var game = new Game(playerName, new DoNothingShuffler());
+        var game = Game.CreateDeterministicGame(playerName, DateTime.UtcNow);
         game.Advance(PlayerDecision.Hit);
 
         // Assert
@@ -65,7 +65,7 @@ public class TestModel
     {
         // Arrange
         var playerName = "tester";
-        var game = new Game(playerName, new DoNothingShuffler());
+        var game = Game.CreateDeterministicGame(playerName, DateTime.UtcNow);
 
         // Act
         game.Advance(PlayerDecision.Stand);

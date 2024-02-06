@@ -25,6 +25,14 @@ jobs:
       - name: Build with dotnet
         run: dotnet build --configuration Release
 
+      - name: Install dotnet-ef tools
+        run: |
+          dotnet tool install --global dotnet-ef
+          dotnet tool restore
+
+      - name: Update database
+        run: dotnet ef database update -c BlackjackContextPsql -p Blackjack.Model -s Blackjack.Model
+
       - name: Run tests
         run: dotnet test --collect:"XPlat Code Coverage"
 

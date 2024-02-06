@@ -16,9 +16,6 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
-var pgsqlConnectionString = System.Environment.GetEnvironmentVariable("POSTGRESQLCONNSTR_");
-builder.Services.AddNpgsql<BlackjackContext>(pgsqlConnectionString);
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -31,6 +28,11 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseSession();
+
+using (var service = new GameService())
+{
+    await service.Context.Database.EnsureCreatedAsync();
+}
 
 app.MapGet("/game/{playerName}", async (string playerName, HttpContext context) =>
 {

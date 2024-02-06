@@ -25,7 +25,7 @@ public class BlackjackContext : DbContext
         #if DEBUG
         optionsBuilder.UseSqlite("Data Source=file::memory:?cache=shared");
         #else
-        var pgsqlConnectionString = System.Environment.GetEnvironmentVariable("POSTGRESQLCONNSTR_");
+        var pgsqlConnectionString = System.Environment.GetEnvironmentVariable("PSQL_CONNECTIONSTRING");
         optionsBuilder.UseNpgsql(pgsqlConnectionString);
         #endif
     }

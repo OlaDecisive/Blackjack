@@ -31,7 +31,7 @@ jobs:
           dotnet tool restore
 
       - name: Update database
-        run: dotnet ef database update -c BlackjackContextPsql -p Blackjack.Model -s Blackjack.Model
+        run: dotnet ef database update -c BlackjackContextPsql -p Blackjack.Model -s Blackjack.Model --connection '${{ secrets.POSTGRESQLCONNSTR_ }}'
 
       - name: Run tests
         run: dotnet test --collect:"XPlat Code Coverage"

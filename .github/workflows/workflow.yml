@@ -29,14 +29,14 @@ jobs:
       AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
       AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-  # deploy to the prod environment
+  # deploy to the Production environment
   deploy-production:
     uses: ./.github/workflows/deploy.yml
     needs: deploy-test
     with:
-      environmentType: Prod
-      resourceGroupName: rg-ola-blackjack-prod
+      environmentType: Production
+      resourceGroupName: rg-ola-blackjack-Production
     secrets:
-      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID_PROD }}
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID_PRODUCTION }}
       AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
       AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}

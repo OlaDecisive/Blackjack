@@ -43,7 +43,7 @@ jobs:
       name: Run what-if
       with:
         failOnStdErr: false
-        resouceGroupName: ${{ inputs.resourceGroupName }}
+        resourceGroupName: ${{ inputs.resourceGroupName }}
         template: ./deploy/main.bicep
         parameters: >
           environmentType=${{ inputs.environmentType }}

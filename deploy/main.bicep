@@ -1,9 +1,9 @@
 @description('The location into which your Azure resources should be deployed.')
 param location string = resourceGroup().location
 
-@description('Select the type of environment you want to provision. Allowed values are Production and Test.')
+@description('Select the type of environment you want to provision. Allowed values are Prod and Test.')
 @allowed([
-  'Production'
+  'Prod'
   'Test'
 ])
 param environmentType string
@@ -18,7 +18,7 @@ var appServiceAppName = 'app-ola-blackjack-${resourceNameSuffix}'
 var appServicePlanName = 'asp-ola-blackjack'
 var logAnalyticsWorkspaceName = 'log-ola-blackjack-${resourceNameSuffix}'
 var applicationInsightsName = 'appi-ola-blackjack'
-var storageAccountName = 'stolablackjack${resourceNameSuffix}'
+var storageAccountName = 'stolablackjack${toLower(resourceNameSuffix)}'
 
 // Define the SKUs for each component based on the environment type.
 var environmentConfigurationMap = {

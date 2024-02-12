@@ -13,6 +13,13 @@ param environmentType string
 //param resourceNameSuffix string = uniqueString(resourceGroup().id)
 param resourceNameSuffix string = environmentType
 
+@description('The URL to the product review API.')
+param reviewApiUrl string
+
+@secure()
+@description('The API key to use when accessing the product review API.')
+param reviewApiKey string
+
 // Define the names for resources.
 var appServiceAppName = 'app-ola-blackjack-${resourceNameSuffix}'
 var appServicePlanName = 'asp-ola-blackjack-${resourceNameSuffix}'
@@ -70,6 +77,14 @@ resource appServiceApp 'Microsoft.Web/sites@2022-03-01' = {
         {
           name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
           value: applicationInsights.properties.ConnectionString
+        }
+        {
+          name: 'ReviewApiUrl'
+          value: reviewApiUrl
+        }
+        {
+          name: 'ReviewApiKey'
+          value: reviewApiKey
         }
       ]
     }

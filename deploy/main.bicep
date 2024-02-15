@@ -106,10 +106,6 @@ resource appServiceApp 'Microsoft.Web/sites@2022-03-01' = {
           name: 'SCM_DO_BUILD_DURING_DEPLOYMENT'
           value: 'true'
         }
-        {
-          name: 'POSTGRESQLCONNSTR_'
-          value: '<need to fix this in bicep>'
-        }
       ]
       linuxFxVersion: 'DOTNET-ISOLATED|8.0'
     }

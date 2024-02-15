@@ -76,7 +76,7 @@ resource appServiceApp 'Microsoft.Web/sites@2022-03-01' = {
           value: applicationInsights.properties.ConnectionString
         }
       ]
-      linuxFxVersion: 'node|14-lts'
+      linuxFxVersion: 'DOTNET-ISOLATED|8.0'
     }
   }
 }

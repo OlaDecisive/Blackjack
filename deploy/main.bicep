@@ -13,7 +13,12 @@ param environmentType string
 //param resourceNameSuffix string = uniqueString(resourceGroup().id)
 param resourceNameSuffix string = environmentType
 
+param databaseAdministratorLogin string
+@secure()
+param databaseAdministratorPassword string
+
 // Define the names for resources.
+var databaseName = 'psql-ola-blackjack-${resourceNameSuffix}'
 var appServiceAppName = 'app-ola-blackjack-${resourceNameSuffix}'
 var appServicePlanName = 'asp-ola-blackjack-${resourceNameSuffix}'
 var logAnalyticsWorkspaceName = 'log-ola-blackjack-${resourceNameSuffix}'
@@ -49,6 +54,28 @@ var environmentConfigurationMap = {
   }
 }
 
+resource database 'Microsoft.DBforPostgreSQL/flexibleServers@2022-12-01' = {
+  name: databaseName
+  location: location
+  sku: {
+    name: 'Standard_B1ms'
+    tier: 'Burstable'
+  }
+  properties: {
+    createMode: 'Create'
+    version: '16'
+    administratorLogin: databaseAdministratorLogin
+    administratorLoginPassword: databaseAdministratorPassword
+    storage: {
+      storageSizeGB: 32
+    }
+    backup: {
+      backupRetentionDays: 7
+      geoRedundantBackup: 'Disabled'
+    }
+  }
+}
+
 resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
   name: appServicePlanName
   location: location
@@ -78,6 +105,10 @@ resource appServiceApp 'Microsoft.Web/sites@2022-03-01' = {
         {
           name: 'SCM_DO_BUILD_DURING_DEPLOYMENT'
           value: 'true'
+        }
+        {
+          name: 'POSTGRESQLCONNSTR_'
+          value: '<need to fix this in bicep>'
         }
       ]
       linuxFxVersion: 'DOTNET-ISOLATED|8.0'

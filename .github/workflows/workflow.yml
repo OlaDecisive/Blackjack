@@ -24,10 +24,12 @@ jobs:
     with:
       environmentType: Test
       resourceGroupName: rg-ola-blackjack-test
+      databaseAdministratorLogin: psql-blackjack-admin
     secrets:
       AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID_TEST }}
       AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
       AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      databaseAdministratorPassword: ${{ secrets.databaseAdministratorPassword }}
 
   # deploy to the Production environment
   deploy-production:
@@ -36,10 +38,12 @@ jobs:
     with:
       environmentType: Production
       resourceGroupName: rg-ola-blackjack-Production
+      databaseAdministratorLogin: psql-blackjack-admin
     secrets:
       AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID_PRODUCTION }}
       AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
       AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      databaseAdministratorPassword: ${{ secrets.databaseAdministratorPassword }}
 
   # build & deploy app to environment
   build-test:

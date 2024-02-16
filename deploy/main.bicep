@@ -11,7 +11,7 @@ param environmentType string
 @description('A unique suffix to add to resource names that need to be globally unique.')
 @maxLength(10)
 //param resourceNameSuffix string = uniqueString(resourceGroup().id)
-param resourceNameSuffix string = environmentType
+param resourceNameSuffix string = toLower(environmentType)
 
 param databaseAdministratorLogin string
 @secure()
@@ -23,7 +23,7 @@ var appServiceAppName = 'app-ola-blackjack-${resourceNameSuffix}'
 var appServicePlanName = 'asp-ola-blackjack-${resourceNameSuffix}'
 var logAnalyticsWorkspaceName = 'log-ola-blackjack-${resourceNameSuffix}'
 var applicationInsightsName = 'appi-ola-blackjack-${resourceNameSuffix}'
-var storageAccountName = 'stolablackjack${toLower(resourceNameSuffix)}'
+var storageAccountName = 'stolablackjack${resourceNameSuffix}'
 
 // Define the SKUs for each component based on the environment type.
 var environmentConfigurationMap = {

@@ -76,6 +76,15 @@ resource database 'Microsoft.DBforPostgreSQL/flexibleServers@2022-12-01' = {
   }
 }
 
+resource firewallRule_AzureIps 'Microsoft.DBforPostgreSQL/flexibleServers/firewallRules@2022-12-01' = {
+  name: 'AllowAzureIps'
+  parent: database
+  properties: {
+    startIpAddress: '0.0.0.0'
+    endIpAddress: '0.0.0.0'
+  }
+}
+
 resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
   name: appServicePlanName
   location: location
@@ -105,6 +114,13 @@ resource appServiceApp 'Microsoft.Web/sites@2022-03-01' = {
         {
           name: 'SCM_DO_BUILD_DURING_DEPLOYMENT'
           value: 'true'
+        }
+      ]
+      connectionStrings: [
+        {
+          name: 'PSQL_CONNECTIONSTRING'
+          connectionString: 'Server=${databaseName}.postgres.database.azure.com;Database=blackjack;Port=5432;User Id=${databaseAdministratorLogin};Password=${databaseAdministratorPassword};Ssl Mode=Require;'
+          type: 'PostgreSQL'
         }
       ]
       linuxFxVersion: 'DOTNETCORE|8.0'

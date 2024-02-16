@@ -125,6 +125,9 @@ resource appServiceApp 'Microsoft.Web/sites@2022-03-01' = {
         }
       ]
       linuxFxVersion: 'DOTNETCORE|8.0'
+      httpLoggingEnabled: true
+      detailedErrorLoggingEnabled: true
+      logsDirectorySizeLimit: 35
     }
   }
 }

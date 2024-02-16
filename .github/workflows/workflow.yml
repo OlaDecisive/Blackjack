@@ -24,7 +24,7 @@ jobs:
     with:
       environmentType: Test
       resourceGroupName: rg-ola-blackjack-test
-      databaseAdministratorLogin: psql-blackjack-admin
+      databaseAdministratorLogin: blackjackadmin
     secrets:
       AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID_TEST }}
       AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
@@ -38,7 +38,7 @@ jobs:
     with:
       environmentType: Production
       resourceGroupName: rg-ola-blackjack-Production
-      databaseAdministratorLogin: psql-blackjack-admin
+      databaseAdministratorLogin: blackjackadmin
     secrets:
       AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID_PRODUCTION }}
       AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}

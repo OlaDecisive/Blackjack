@@ -20,7 +20,7 @@ param databaseAdministratorPassword string
 // Define the names for resources.
 var databaseName = 'psql-ola-blackjack-${resourceNameSuffix}'
 var appServiceAppName = 'app-ola-blackjack-${resourceNameSuffix}'
-var appServicePlanName = 'asp-ola-blackjack-${resourceNameSuffix}'
+var appServicePlanName = 'asp-ola-blackjack'
 var logAnalyticsWorkspaceName = 'log-ola-blackjack-${resourceNameSuffix}'
 var applicationInsightsName = 'appi-ola-blackjack-${resourceNameSuffix}'
 var storageAccountName = 'stolablackjack${resourceNameSuffix}'
@@ -44,6 +44,7 @@ var environmentConfigurationMap = {
     appServicePlan: {
       sku: {
         name: 'F1'
+        capacity: 1
       }
     }
     storageAccount: {

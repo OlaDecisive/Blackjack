@@ -107,7 +107,7 @@ resource appServiceApp 'Microsoft.Web/sites@2022-03-01' = {
           value: 'true'
         }
       ]
-      linuxFxVersion: 'DOTNET-ISOLATED|8.0'
+      linuxFxVersion: 'DOTNETCORE|8.0'
     }
   }
 }

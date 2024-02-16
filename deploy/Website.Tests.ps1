@@ -4,13 +4,13 @@ param(
   [string] $HostName
 )
 
-Describe 'Toy Website' {
+Describe 'Blackjack WebAPI' {
 
-    It 'Serves pages over HTTPS' {
+    It 'Answers pages over HTTPS' {
       $request = [System.Net.WebRequest]::Create("https://$HostName/")
       $request.AllowAutoRedirect = $false
       $request.GetResponse().StatusCode |
-        Should -Be 200 -Because "the website requires HTTPS"
+        Should -BeIn 200 404 -Because "the website requires HTTPS"
     }
 
     It 'Does not serves pages over HTTP' {

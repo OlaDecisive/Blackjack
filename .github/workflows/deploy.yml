@@ -72,10 +72,19 @@ jobs:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - uses: Azure/CLI@v1
+        with:
+          inlineScript: |
+            #!/bin/bash
+            az group create --name ${{ inputs.resourceGroupName }} --location norwayeast
+            echo "Azure resource group '${{ inputs.resourceGroupName }}' created"
+
       - uses: azure/arm-deploy@v1
         id: deploy
         name: Deploy Bicep file
         with:
+          scope: resourcegroup
           failOnStdErr: false
           deploymentName: ${{ github.run_number }}
           resourceGroupName: ${{ inputs.resourceGroupName }}

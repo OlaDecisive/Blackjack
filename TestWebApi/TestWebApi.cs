@@ -38,7 +38,7 @@ public class TestWebApi
     }
 
     [Fact]
-    public async Task TestHit()
+    public async Task TestGameAfterHit()
     {
         var playerName = "DeterministicTester";
 
@@ -51,7 +51,7 @@ public class TestWebApi
         var gameAfterHitResponse = await client.PostAsync($"/game/{playerName}/hit", null);
         var gameViewAfterHit = await gameAfterHitResponse.Content.ReadFromJsonAsync<GameView>();
 
-        var expectedPlayerCards = newGameView.PlayerHand.Cards.Count();
+        var expectedPlayerCards = newGameView.PlayerHand.Cards.Count() + 1;
 
         Assert.Equal(expectedPlayerCards, gameViewAfterHit.PlayerHand.Cards.Count());
     }

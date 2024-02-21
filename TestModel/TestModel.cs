@@ -48,11 +48,12 @@ public class TestModel
         
         // Act
         var game = Game.CreateDeterministicGame(playerName, DateTime.UtcNow);
+
+        Assert.Equal(52 - 2 - 2, game.CurrentRound.Deck.Cards.Count); // At start of game, two cards are dealt to player, two to dealer
+
         game.Advance(PlayerDecision.Hit);
 
         // Assert
-        //Assert.Equal(2, game.Rounds.Count);
-        //Assert.Equal(52 - 2 - 2, game.CurrentRound.Deck.Cards.Count); // At start of game, two cards are dealt to player, two to dealer
         Assert.Equal(52 - 2 - 2 - 2, game.CurrentRound.Deck.Cards.Count); // After one round, one extra card is dealt to the player, one to the dealer
 
         Assert.Equal(GameStatus.Running, game.Status);
@@ -71,7 +72,6 @@ public class TestModel
         game.Advance(PlayerDecision.Stand);
 
         // Assert
-        //Assert.Equal(2, game.Rounds.Count);
         Assert.Equal(52 - 2 - 2, game.CurrentRound.Deck.Cards.Count); // At start of game, two cards are dealt to player, two to dealer
         //Assert.Equal(52 - 2 - 2 - 2, game.Rounds.Last().Deck.Cards.Count); // After one round, one extra card is dealt to the player, one to the dealer
     }

@@ -1,4 +1,4 @@
-name: deploy
+name: deploy-infrastructure
 
 on:
   workflow_call:
@@ -75,7 +75,7 @@ jobs:
           databaseAdministratorPassword=${{ secrets.databaseAdministratorPassword }}
         additionalArguments: --what-if
 
-  deploy:
+  deploy-infrastructure:
     needs: validate
     environment: ${{ inputs.environmentType }}
     runs-on: ubuntu-latest
@@ -91,7 +91,7 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - uses: azure/arm-deploy@v1
-        id: deploy
+        id: deploy-infrastructure
         name: Deploy Bicep file
         with:
           scope: resourcegroup
@@ -106,7 +106,7 @@ jobs:
 
   # smoke-test:
   #   runs-on: ubuntu-latest
-  #   needs: deploy
+  #   needs: deploy-infrastructure
   #   steps:
   #   - uses: actions/checkout@v3
   #   - run: |

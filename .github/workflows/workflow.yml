@@ -17,9 +17,9 @@ jobs:
   lint:
     uses: ./.github/workflows/lint.yml
 
-  # deploy to the test environment
-  deploy-test:
-    uses: ./.github/workflows/deploy.yml
+  # deploy infrastructure to the test environment
+  deploy-infrastructure-test:
+    uses: ./.github/workflows/deploy-infrastructure.yml
     needs: lint
     with:
       environmentType: Test
@@ -31,9 +31,9 @@ jobs:
       AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       databaseAdministratorPassword: ${{ secrets.databaseAdministratorPassword }}
 
-  # deploy to the Production environment
-  deploy-production:
-    uses: ./.github/workflows/deploy.yml
+  # deploy infrastructure to the production environment
+  deploy-infrastructure-production:
+    uses: ./.github/workflows/deploy-infrastructure.yml
     needs: build-test
     with:
       environmentType: Production
@@ -45,10 +45,10 @@ jobs:
       AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       databaseAdministratorPassword: ${{ secrets.databaseAdministratorPassword }}
 
-  # build & deploy app to environment
+  # build & deploy app to the test environment
   build-test:
-    uses: ./.github/workflows/build.yml
-    needs: deploy-test
+    uses: ./.github/workflows/build-and-deploy-code.yml
+    needs: deploy-infrastructure-test
     with:
       environmentType: Test
     secrets:
@@ -57,9 +57,10 @@ jobs:
       AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
       AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
+  # build & deploy app to the production environment
   build-production:
-    uses: ./.github/workflows/build.yml
-    needs: deploy-production
+    uses: ./.github/workflows/build-and-deploy-code.yml
+    needs: deploy-infrastructure-production
     with:
       environmentType: Production
     secrets:

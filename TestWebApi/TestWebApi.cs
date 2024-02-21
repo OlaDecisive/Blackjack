@@ -1,4 +1,5 @@
 using System.Net.Http.Json;
+using Blackjack.Model;
 using Blackjack.Service;
 using Microsoft.AspNetCore.Mvc.Testing;
 
@@ -46,10 +47,16 @@ public class TestWebApi
         using var client = application.CreateClient();
 
         var newGameResponse = await client.PostAsync($"/game/{playerName}", null);
-        var newGameView = await newGameResponse.Content.ReadFromJsonAsync<GameView>();
+        var newGameView = (await newGameResponse.Content.ReadFromJsonAsync<GameView>())!;
+
+        // here we assume that the player is dealt the first card from the top of the deck
+        // since we should have a deterministic deck, the first card should be Ace of Clubs (first Suit enum value)
+        var firstPlayersCard = newGameView.PlayerHand.Cards.First();
+        Assert.Equal(CardValue.Ace, firstPlayersCard.Value);
+        Assert.Equal(Suit.Clubs, firstPlayersCard.Suit);
 
         var gameAfterHitResponse = await client.PostAsync($"/game/{playerName}/hit", null);
-        var gameViewAfterHit = await gameAfterHitResponse.Content.ReadFromJsonAsync<GameView>();
+        var gameViewAfterHit = (await gameAfterHitResponse.Content.ReadFromJsonAsync<GameView>())!;
 
         var expectedPlayerCards = newGameView.PlayerHand.Cards.Count() + 1;
 

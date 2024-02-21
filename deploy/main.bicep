@@ -116,6 +116,10 @@ resource appServiceApp 'Microsoft.Web/sites@2022-03-01' = {
           name: 'SCM_DO_BUILD_DURING_DEPLOYMENT'
           value: 'true'
         }
+        {
+          name: 'WEBSITE_RUN_FROM_PACKAGE'
+          value: '1'
+        }
       ]
       connectionStrings: [
         {

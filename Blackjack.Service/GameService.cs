@@ -56,13 +56,13 @@ public class GameService : IDisposable
     {
         var oldGames = Context.Games.Include(game => game.CurrentRound)
                             .ThenInclude(gameState => gameState.Deck)
-                            .ThenInclude(deck => deck.Cards)
+                            .ThenInclude(deck => deck.Cards.OrderBy(card => card.Suit).ThenBy(card => card.Value))
                         .Include(game => game.CurrentRound)
                             .ThenInclude(gameState => gameState.DealerHand)
-                            .ThenInclude(hand => hand.Cards)
+                            .ThenInclude(hand => hand.Cards.OrderBy(card => card.Suit).ThenBy(card => card.Value))
                         .Include(game => game.CurrentRound)
                             .ThenInclude(gameState => gameState.PlayerHand)
-                            .ThenInclude(hand => hand.Cards)
+                            .ThenInclude(hand => hand.Cards.OrderBy(card => card.Suit).ThenBy(card => card.Value))
                     .Where(game => game.PlayerName == playerName && game.Status != GameStatus.Running && game.Status != GameStatus.Unknown);
         if (oldGames?.Any() ?? false)
         {
@@ -86,13 +86,13 @@ public class GameService : IDisposable
     {
         return await Context.Games.Include(game => game.CurrentRound)
                                 .ThenInclude(gameState => gameState.Deck)
-                                .ThenInclude(deck => deck.Cards)
+                                .ThenInclude(deck => deck.Cards.OrderBy(card => card.Suit).ThenBy(card => card.Value))
                             .Include(game => game.CurrentRound)
                                 .ThenInclude(gameState => gameState.DealerHand)
-                                .ThenInclude(hand => hand.Cards)
+                                .ThenInclude(hand => hand.Cards.OrderBy(card => card.Suit).ThenBy(card => card.Value))
                             .Include(game => game.CurrentRound)
                                 .ThenInclude(gameState => gameState.PlayerHand)
-                                .ThenInclude(hand => hand.Cards)
+                                .ThenInclude(hand => hand.Cards.OrderBy(card => card.Suit).ThenBy(card => card.Value))
                         .SingleOrDefaultAsync(game => game.PlayerName == playerName && game.Status == GameStatus.Running);
     }
 
@@ -100,13 +100,13 @@ public class GameService : IDisposable
     {
         return await Context.Games.Include(game => game.CurrentRound)
                                 .ThenInclude(gameState => gameState.Deck)
-                                .ThenInclude(deck => deck.Cards)
+                                .ThenInclude(deck => deck.Cards.OrderBy(card => card.Suit).ThenBy(card => card.Value))
                             .Include(game => game.CurrentRound)
                                 .ThenInclude(gameState => gameState.DealerHand)
-                                .ThenInclude(hand => hand.Cards)
+                                .ThenInclude(hand => hand.Cards.OrderBy(card => card.Suit).ThenBy(card => card.Value))
                             .Include(game => game.CurrentRound)
                                 .ThenInclude(gameState => gameState.PlayerHand)
-                                .ThenInclude(hand => hand.Cards)
+                                .ThenInclude(hand => hand.Cards.OrderBy(card => card.Suit).ThenBy(card => card.Value))
                         .OrderByDescending(game => game.CurrentRound.Timestamp)
                         .FirstOrDefaultAsync(game => game.PlayerName == playerName);
     }

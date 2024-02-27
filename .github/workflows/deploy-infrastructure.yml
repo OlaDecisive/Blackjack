@@ -24,6 +24,7 @@ on:
 
 jobs:
   ensureGroupsAreCreated:
+    environment: ${{ inputs.environmentType }}
     runs-on: ubuntu-latest
     steps:
     - uses: azure/login@v1
@@ -41,6 +42,7 @@ jobs:
 
   validate:
     needs: ensureGroupsAreCreated
+    environment: ${{ inputs.environmentType }}
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -105,6 +107,7 @@ jobs:
             databaseAdministratorPassword=${{ secrets.databaseAdministratorPassword }}
 
   # smoke-test:
+  #   environment: ${{ inputs.environmentType }}
   #   runs-on: ubuntu-latest
   #   needs: deploy-infrastructure
   #   steps:

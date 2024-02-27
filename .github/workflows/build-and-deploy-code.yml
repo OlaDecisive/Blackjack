@@ -46,15 +46,16 @@ jobs:
       - name: Run tests
         run: dotnet test --collect:"XPlat Code Coverage"
 
-      #TODO: deploy test result somewhere
-
       - name: Generate test coverage report
         uses: danielpalme/ReportGenerator-GitHub-Action@5
         with:
           reports: '**/coverage.cobertura.xml'
           targetdir: 'coveragereport'
-          reporttypes: 'Html'
+          reporttypes: 'MarkdownSummaryGithub'
           classfilters: '-Blackjack.Model.Migrations*'
+      
+      - name: Write coverage report to Job Summary
+        run: cat coveragereport/SummaryGithub.md >> $GITHUB_STEP_SUMMARY
 
       - name: dotnet publish
         run: dotnet publish WebApi -c Release -o ${{env.DOTNET_ROOT}}/myapp

@@ -9,14 +9,6 @@ public class Deck
 
     public Deck(List<Card> cards) => Cards = cards;
 
-    public static Deck CreateOrderedDeck()
-    {
-        var cards = Enum.GetValues<Suit>().Select(suit => Enum.GetValues<CardValue>().Select(value => new Card(value: value, suit: suit))).SelectMany(card => card).ToArray();
-        var deck = new Deck(cards.ToList<Card>());
-
-        return deck;
-    }
-
     public static Deck CreateShuffledDeck(IShuffler random)
     {
         var cards = Enum.GetValues<Suit>().Select(suit => Enum.GetValues<CardValue>().Select(value => new Card(value: value, suit: suit))).SelectMany(card => card).ToArray();

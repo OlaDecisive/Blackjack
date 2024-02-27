@@ -13,6 +13,7 @@ public enum GameStatus
 
 public enum PlayerDecision
 {
+    Unknown,
     Hit,
     Stand,
 }
@@ -22,6 +23,7 @@ public class Game
     public Guid Id { get; set; }
     public string PlayerName { get; set; }
     public GameState CurrentRound { get; set; }
+    public PlayerDecision LastRoundPlayerDecision { get; set; }
     
     public Game() 
     {
@@ -53,16 +55,12 @@ public class Game
 
     public void Advance(PlayerDecision playerDecision)
     {
-        CurrentRound.DealCards(playerDecision);
+        if (playerDecision == PlayerDecision.Hit && LastRoundPlayerDecision == PlayerDecision.Stand)
+            throw new Exception("Cannot Hit when player has previously chosen Stand");
         
-        // If player stands, dealer hits until dealer cards are >= 17 or greater than players cards
-        // TODO: dealer shouldn't know about players hand?
-        if (playerDecision == PlayerDecision.Stand &&
-            CurrentRound.DealerHand.NumberValue < 17 && 
-            CurrentRound.DealerHand.NumberValue <= CurrentRound.PlayerHand.NumberValue)
-        {
-            Advance(playerDecision);
-        }
+        LastRoundPlayerDecision = playerDecision;
+
+        CurrentRound.DealCards(playerDecision);
     }
 
     [JsonIgnore]

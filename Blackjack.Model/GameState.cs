@@ -48,20 +48,27 @@ public class GameState
         var dealerSum = DealerHand.NumberValue;
 
         // TODO: playerAction and dealerAction should both be Stand before it makes sense to compare card sums
-        if (playerSum > 21 && dealerSum > 21)
-            return GameStatus.Tie;
+        return DetermineGameStatus(playerSum, dealerSum);
+    }
+
+    public static GameStatus DetermineGameStatus(int playerSum, int dealerSum)
+    {
         if (playerSum > 21)
             return GameStatus.DealerWins;
-        else if (dealerSum > 21)
-            return GameStatus.PlayerWins;
-        else if (dealerSum >= 21 && playerSum == dealerSum)
+        else if (playerSum == 21 && dealerSum == 21)
             return GameStatus.Tie;
-        else if (playerSum > dealerSum && dealerSum >= 17)
+        else if (playerSum == 21)
             return GameStatus.PlayerWins;
-        else if (playerSum < dealerSum && dealerSum >= 17)
-            return GameStatus.DealerWins;
-        else 
+        else if (dealerSum < 17)
             return GameStatus.Running;
+        else if (playerSum == dealerSum)
+            return GameStatus.Tie;
+        else if (playerSum > dealerSum)
+            return GameStatus.PlayerWins;
+        else if (playerSum < dealerSum)
+            return GameStatus.DealerWins;
+        else
+            throw new Exception($"Cannot determine game status from player sum {playerSum} and dealer sum {dealerSum}");
     }   
 
     public void DealCards(PlayerDecision playerDecision)
@@ -78,7 +85,7 @@ public class GameState
             PlayerHand.AddCard(cardForPlayer);
         }
 
-        if (nextDealerHand.NumberValue < 17 && nextDealerHand.NumberValue <= nextPlayerHand.NumberValue)
+        if (nextDealerHand.NumberValue < 17)
         {
             var cardForDealer = Deck.TakeCardFromTop();
             DealerHand.AddCard(cardForDealer);

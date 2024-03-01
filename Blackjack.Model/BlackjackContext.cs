@@ -1,4 +1,6 @@
 using System.Linq;
+using Azure.Core;
+using Azure.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Blackjack.Model;
@@ -26,7 +28,7 @@ public class BlackjackContext : DbContext
         #if DEBUG
         optionsBuilder.UseSqlite("Data Source=file::memory:?cache=shared");
         #else
-        var pgsqlConnectionString = System.Environment.GetEnvironmentVariable("POSTGRESQLCONNSTR_PSQL_CONNECTIONSTRING");
+        var pgsqlConnectionString = System.Environment.GetEnvironmentVariable("POSTGRESQLCONNSTR_PSQL_CONNECTIONSTRING_MANAGED");
         if (string.IsNullOrEmpty(pgsqlConnectionString))
         {
             var varnames = System.Environment.GetEnvironmentVariables().Keys;
@@ -37,8 +39,20 @@ public class BlackjackContext : DbContext
 
             throw new Exception($"Empty psql connstring, dumping env vars:\n{string.Join("\n", envvars)}");
         }
-        optionsBuilder.UseNpgsql(pgsqlConnectionString);
+        optionsBuilder.UseNpgsql(pgsqlConnectionString, npgsqlDbContextOptionsBuilder => 
+        {
+            npgsqlDbContextOptionsBuilder.ProvidePasswordCallback((host, port, database, username) => GetAccessToken());
+        });
         #endif
+    }
+
+    private static string GetAccessToken()
+    {
+        var tokenRequestContext = new TokenRequestContext(new[] { "https://ossrdbms-aad.database.windows.net" });
+        var credential = new DefaultAzureCredential(); // Set ManagedIdentityClientId if you want to use User Assigned Managed Identity
+        var accessToken = credential.GetToken(tokenRequestContext);
+
+        return accessToken.Token;
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

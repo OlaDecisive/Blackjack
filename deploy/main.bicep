@@ -65,8 +65,6 @@ resource database 'Microsoft.DBforPostgreSQL/flexibleServers@2022-12-01' = {
   properties: {
     createMode: 'Create'
     version: '16'
-    administratorLogin: databaseAdministratorLogin
-    administratorLoginPassword: databaseAdministratorPassword
     storage: {
       storageSizeGB: 32
     }
@@ -74,6 +72,12 @@ resource database 'Microsoft.DBforPostgreSQL/flexibleServers@2022-12-01' = {
       backupRetentionDays: 7
       geoRedundantBackup: 'Disabled'
     }
+    authConfig: {
+      activeDirectoryAuth: 'Enabled'
+      passwordAuth: 'Enabled' // disable passwordAuth once AD auth works
+    }
+    administratorLogin: databaseAdministratorLogin
+    administratorLoginPassword: databaseAdministratorPassword
   }
 }
 
@@ -127,12 +131,20 @@ resource appServiceApp 'Microsoft.Web/sites@2022-03-01' = {
           connectionString: 'Server=${databaseName}.postgres.database.azure.com;Database=blackjack;Port=5432;User Id=${databaseAdministratorLogin};Password=${databaseAdministratorPassword};Ssl Mode=Require;'
           type: 'PostgreSQL'
         }
+        {
+          name: 'PSQL_CONNECTIONSTRING_MANAGED'
+          connectionString: 'Server=${databaseName}.postgres.database.azure.com;Database=blackjack;Port=5432;User Id=${appServiceAppName};Ssl Mode=Require;'
+          type: 'PostgreSQL'
+        }
       ]
       linuxFxVersion: 'DOTNETCORE|8.0'
       httpLoggingEnabled: true
       detailedErrorLoggingEnabled: true
       logsDirectorySizeLimit: 35
     }
+  }
+  identity: {
+    type: 'SystemAssigned'
   }
 }
 
